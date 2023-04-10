@@ -1,5 +1,3 @@
-%token INT EXTERN COMND STR NUM OPERATOR LOGIC
-
 %{
 #include <stdio.h>
 void yyerror(const char *);
@@ -10,6 +8,7 @@ extern int yylineno;
 extern char* yytext;
 %}
 
+%token INT EXTERN COMND STR NUM OPERATOR LOGIC
 %start PROGRAM
 
 %%

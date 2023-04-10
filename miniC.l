@@ -9,7 +9,7 @@ letter	[a-zA-Z]
 num     [0-9]
 alphanum_us 	[a-zA-Z0-9_]
 
-%%%%
+%%
 "int"		{printf("%s", yytext); 
 				 return INT;}
 "extern"	 {printf("%s", yytext); 
@@ -62,7 +62,7 @@ alphanum_us 	[a-zA-Z0-9_]
 			 return yytext[0];}
 ")"		{printf("%s", yytext); 
              return yytext[0];}
-%%%%%
+%%
 
 int yywrap(){
 	return 1;
