@@ -1,4 +1,4 @@
-prog = miniC 
+prog = miniC
 $(prog).out: $(prog).l $(prog).y
 	yacc -d -v $(prog).y
 	lex $(prog).l

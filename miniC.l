@@ -67,8 +67,3 @@ alphanum_us 	[a-zA-Z0-9_]
 int yywrap(){
 	return 1;
 }
-
-int main(){
-	yylex();
-    return 0;
-}
