@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include "ast.h"
 void yyerror(const char *);
 extern int yylex();
 extern int yylex_destroy();
@@ -8,25 +9,79 @@ extern int yylineno;
 extern char* yytext;
 %}
 
-%token INT EXTERN COMND STR NUM OPERATOR LOGIC
-%start PROGRAM
+%union{
+	int ival;
+	char* sname;
+	astNode *nptr;
+	vector<astNode*> *svec_ptr;
+}
+
+%token INT EXTERN IF WHILE ELSE RETURN VOID
+%token <ival> NUM 
+%token <sname> STR READ PRINT
+%type <nptr> expression program declaration definition1 definition2 func_def if_block while_block else_block return_statement eq_cond lt_cond gt_cond gteq_cond lteq_cond neq_cond func_call comparison assign stmt comnd_block add subtract multiply divide term
+%type <svec_ptr> stmts 
+%start program
 
 %%
-DECLARATION : DECLARATION ';' | INT STR
+declaration : INT STR ';' {$$ = createDecl($2);}
 
-DEFINITION : EXTERN STR STR '(' INT ')' ';' | EXTERN INT STR'(' ')' ';' 
+definition1 : EXTERN VOID PRINT '(' INT ')' ';' {$$ = createExtern($3);} 
 
-COMPARISON : STR OPERATOR STR 
+definition2 : EXTERN INT READ '(' ')' ';' {$$ = createExtern($3);} 
 
-EXPRESSION : NUM LOGIC NUM ';'| NUM LOGIC NUM LOGIC EXPRESSION ';'| STR LOGIC STR ';'| STR LOGIC STR LOGIC EXPRESSION ';' | STR LOGIC NUM ';'| STR LOGIC NUM LOGIC EXPRESSION ';'| NUM LOGIC STR ';'| NUM LOGIC STR LOGIC EXPRESSION ';'
+return_statement : RETURN term ';' {$$ = createRet($2);} | RETURN expression {$$ = createRet($2);}
 
-ASSIGN : STR '=' EXPRESSION | STR '=' NUM ';'
+term: NUM {$$ = createCnst($1);} | STR  {$$ = createVar($1);}
 
-STARTCOMND : COMND '(' COMPARISON ')' '{' | INT STR '(' DECLARATION ')' '{' | INT STR '(' ')' '{' | COMND 
+eq_cond : term '=''=' term {$$ = createRExpr($1, $4, eq);}
 
-LINE : STARTCOMND | ASSIGN | DECLARATION | DEFINITION | '}'
+lt_cond : term '<' term  {$$ = createRExpr($1, $3, lt);}
 
-PROGRAM : PROGRAM LINE | LINE
+gt_cond : term '>' term  {$$ = createRExpr($1, $3, gt);}
+
+gteq_cond : term '>''=' term {$$ = createRExpr($1, $4, ge);}
+
+lteq_cond : term '<''=' term {$$ = createRExpr($1, $4, le);}
+
+neq_cond : term '!''=' term {$$ = createRExpr($1, $4, neq);}
+
+comparison : eq_cond {$$ = $1;} | lt_cond {$$ = $1;} | lteq_cond {$$ = $1;} | gteq_cond {$$ = $1;}| gt_cond {$$ = $1;} | neq_cond {$$ = $1;}
+
+add : term '+' term ';' {$$ = createBExpr($1, $3, add);}
+
+subtract : term '-' term ';'  {$$ = createBExpr($1, $3, sub);}
+
+multiply : term '*' term ';'  {$$ = createBExpr($1, $3, mul);}
+
+divide : term '/' term ';'    {$$ = createBExpr($1, $3, divide);}
+
+expression : add {$$ = $1;}| subtract {$$ = $1;} | multiply {$$ = $1;}  | divide {$$ = $1;}
+
+assign : STR '=' expression {astNode* tnptr = createVar($1); $$ = createAsgn(tnptr, $3);}
+		| STR '=' NUM ';'  {astNode* tnptr = createVar($1); astNode* tnptr2 = createCnst($3); $$ = createAsgn(tnptr, tnptr2);}
+		| STR '=' STR ';'  {astNode* tnptr = createVar($1); astNode* tnptr2 = createVar($3); $$ = createAsgn(tnptr, tnptr2);}
+		| STR '=' func_call {astNode* tnptr = createVar($1); $$ = createAsgn(tnptr, $3);}
+
+func_call :  PRINT '(' STR ')' ';' {astNode* tnptr = createVar($3); $$ = createCall($1, tnptr);} 
+			| PRINT '(' NUM ')' ';' {astNode* tnptr = createCnst($3); $$ = createCall($1, tnptr);} 
+			| READ '('')' ';' {$$ = createCall($1);} 
+
+if_block : IF '(' comparison ')' stmt {$$ = createIf($3, $5);} | IF '(' comparison ')' stmt else_block {$$ = createIf($3, $5, $6);}
+
+while_block : WHILE '(' comparison ')' stmt {$$ = createWhile($3, $5);}
+
+else_block : ELSE stmt {$$ = $2;}
+
+stmt : func_call {$$ = $1;} | return_statement {$$ = $1;} | assign {$$ = $1;} | declaration  {$$ = $1;}| if_block  {$$ = $1;} | while_block  {$$ = $1;} | comnd_block {$$ = $1;}
+
+stmts : stmts stmt {$$ = $1; $$->push_back($2);} | stmt {$$ = new vector<astNode*> (); $$->push_back($1);}
+
+comnd_block : '{' stmts '}' {$$ = createBlock($2); printNode($$);}
+
+func_def : INT STR '(' INT STR ')' comnd_block {astNode* tnptr = createVar($5); $$ = createFunc($2, tnptr , $7);}
+
+program : definition1 definition2 func_def {$$ = createProg($1, $2, $3); printNode($$);}
 %%
 
 int main(int argc, char** argv){

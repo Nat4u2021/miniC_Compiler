@@ -1,7 +1,9 @@
 %{
+#include "ast.h"
 #include <stdio.h>
 #include <math.h>
 #include "y.tab.h"
+#include <string.h>
 %}
 
 %option yylineno
@@ -10,45 +12,50 @@ num     [0-9]
 alphanum_us 	[a-zA-Z0-9_]
 
 %%
-"int"		{printf("%s", yytext); 
+"int"		{yylval.sname = strdup(yytext); printf("%s", yytext); 
 				 return INT;}
-"extern"	 {printf("%s", yytext); 
+"extern"	{yylval.sname = strdup(yytext); printf("%s", yytext); 
 				 return EXTERN;}
-"while"	 {printf("%s", yytext); 
-				 return COMND;}
-"if"	 {printf("%s", yytext); 
-				 return COMND;}
-"else if"	 {printf("%s", yytext); 
-				 return COMND;}
-"else"	 {printf("%s", yytext); 
-				 return COMND;}
-"return" {printf("%s", yytext); 
-				 return COMND;}
+"while"	 {yylval.sname = strdup(yytext); printf("%s", yytext); 
+				 return WHILE;}
+"if"	 {yylval.sname = strdup(yytext); printf("%s", yytext); 
+				 return IF;}
+"else"	 {yylval.sname = strdup(yytext); printf("%s", yytext); 
+				 return ELSE;}
+"return" {yylval.sname = strdup(yytext); printf("%s", yytext); 
+				 return RETURN;}
+"read" {yylval.sname = strdup(yytext); printf("%s", yytext); 
+				 return READ;}
+"print" {yylval.sname = strdup(yytext); printf("%s", yytext); 
+				 return PRINT;}
+"void" {yylval.sname = strdup(yytext); printf("%s", yytext); 
+				 return VOID;}
 
-{letter}{alphanum_us}* {printf("%s", yytext); 
+{letter}{alphanum_us}* {yylval.sname = strdup(yytext); printf("%s", yytext); 
 						return STR;}
-{num}+ {printf("%s", yytext);
+{num}+ {yylval.ival= atoi(yytext); printf("%s", yytext);
                     return NUM;}
 
 "<"		{printf("%s", yytext); 
-			 return OPERATOR;}
+			 return yytext[0];}
 ">"		{printf("%s", yytext); 
-			 return OPERATOR;}
+			 return yytext[0];}
 "=="		{printf("%s", yytext); 
-			 return OPERATOR;}
+			 return yytext[0];}
 ">="		{printf("%s", yytext); 
-			 return OPERATOR;}
+			 return yytext[0];}
 "<="		{printf("%s", yytext); 
-			 return OPERATOR;}
-
+			 return yytext[0];}
+"!="		{printf("%s", yytext); 
+			 return yytext[0];}
 "+"		{printf("%s", yytext); 
-			 return LOGIC;}
+			 return yytext[0];}
 "-"		{printf("%s", yytext); 
-			 return LOGIC;}
+			 return yytext[0];}
 "/"		{printf("%s", yytext); 
-			 return LOGIC;}
+			 return yytext[0];}
 "*"		{printf("%s", yytext); 
-			 return LOGIC;}
+			 return yytext[0];}
 
 "{" 	{printf("%s", yytext); 
 			 return yytext[0];}
@@ -62,6 +69,7 @@ alphanum_us 	[a-zA-Z0-9_]
 			 return yytext[0];}
 ")"		{printf("%s", yytext); 
              return yytext[0];}
+
 %%
 
 int yywrap(){
