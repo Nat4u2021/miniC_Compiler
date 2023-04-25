@@ -89,7 +89,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 12 "miniC.y"
+#line 16 "miniC.y"
 
 	int ival;
 	char* sname;

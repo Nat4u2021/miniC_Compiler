@@ -1,4 +1,4 @@
-State 103 conflicts: 1 shift/reduce
+State 105 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -79,16 +79,17 @@ Grammar
    48 comnd_block: '{' stmts '}'
 
    49 func_def: INT STR '(' INT STR ')' comnd_block
+   50         | INT STR '(' ')' comnd_block
 
-   50 program: definition1 definition2 func_def
+   51 program: definition1 definition2 func_def
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
     '!' (33) 13
-    '(' (40) 2 3 32 33 34 35 36 37 49
-    ')' (41) 2 3 32 33 34 35 36 37 49
+    '(' (40) 2 3 32 33 34 35 36 37 49 50
+    ')' (41) 2 3 32 33 34 35 36 37 49 50
     '*' (42) 22
     '+' (43) 20
     '-' (45) 21
@@ -100,7 +101,7 @@ Terminals, with rules where they appear
     '{' (123) 48
     '}' (125) 48
     error (256)
-    INT (258) 1 2 3 49
+    INT (258) 1 2 3 49 50
     EXTERN (259) 2 3
     IF (260) 35 36
     WHILE (261) 37
@@ -108,7 +109,7 @@ Terminals, with rules where they appear
     RETURN (263) 4 5
     VOID (264) 2
     NUM <ival> (265) 6 29 33
-    STR <sname> (266) 1 7 28 29 30 31 32 49
+    STR <sname> (266) 1 7 28 29 30 31 32 49 50
     READ <sname> (267) 3 34
     PRINT <sname> (268) 2 32 33
 
@@ -122,10 +123,10 @@ Nonterminals, with rules where they appear
         on right: 42
     definition1 <nptr> (29)
         on left: 2
-        on right: 50
+        on right: 51
     definition2 <nptr> (30)
         on left: 3
-        on right: 50
+        on right: 51
     return_statement <nptr> (31)
         on left: 4 5
         on right: 40
@@ -191,12 +192,12 @@ Nonterminals, with rules where they appear
         on right: 46 48
     comnd_block <nptr> (52)
         on left: 48
-        on right: 45 49
+        on right: 45 49 50
     func_def <nptr> (53)
-        on left: 49
-        on right: 50
+        on left: 49 50
+        on right: 51
     program <nptr> (54)
-        on left: 50
+        on left: 51
         on right: 0
 
 
@@ -219,7 +220,7 @@ State 1
 
 State 2
 
-   50 program: definition1 • definition2 func_def
+   51 program: definition1 • definition2 func_def
 
     EXTERN  shift, and go to state 5
 
@@ -249,7 +250,7 @@ State 5
 
 State 6
 
-   50 program: definition1 definition2 • func_def
+   51 program: definition1 definition2 • func_def
 
     INT  shift, and go to state 10
 
@@ -280,15 +281,16 @@ State 9
 State 10
 
    49 func_def: INT • STR '(' INT STR ')' comnd_block
+   50         | INT • STR '(' ')' comnd_block
 
     STR  shift, and go to state 14
 
 
 State 11
 
-   50 program: definition1 definition2 func_def •
+   51 program: definition1 definition2 func_def •
 
-    $default  reduce using rule 50 (program)
+    $default  reduce using rule 51 (program)
 
 
 State 12
@@ -308,6 +310,7 @@ State 13
 State 14
 
    49 func_def: INT STR • '(' INT STR ')' comnd_block
+   50         | INT STR • '(' ')' comnd_block
 
     '('  shift, and go to state 17
 
@@ -329,293 +332,311 @@ State 16
 State 17
 
    49 func_def: INT STR '(' • INT STR ')' comnd_block
+   50         | INT STR '(' • ')' comnd_block
 
     INT  shift, and go to state 20
+    ')'  shift, and go to state 21
 
 
 State 18
 
     2 definition1: EXTERN VOID PRINT '(' INT ')' • ';'
 
-    ';'  shift, and go to state 21
+    ';'  shift, and go to state 22
 
 
 State 19
 
     3 definition2: EXTERN INT READ '(' ')' • ';'
 
-    ';'  shift, and go to state 22
+    ';'  shift, and go to state 23
 
 
 State 20
 
    49 func_def: INT STR '(' INT • STR ')' comnd_block
 
-    STR  shift, and go to state 23
+    STR  shift, and go to state 24
 
 
 State 21
 
-    2 definition1: EXTERN VOID PRINT '(' INT ')' ';' •
-
-    $default  reduce using rule 2 (definition1)
-
-
-State 22
-
-    3 definition2: EXTERN INT READ '(' ')' ';' •
-
-    $default  reduce using rule 3 (definition2)
-
-
-State 23
-
-   49 func_def: INT STR '(' INT STR • ')' comnd_block
-
-    ')'  shift, and go to state 24
-
-
-State 24
-
-   49 func_def: INT STR '(' INT STR ')' • comnd_block
+   50 func_def: INT STR '(' ')' • comnd_block
 
     '{'  shift, and go to state 25
 
     comnd_block  go to state 26
 
 
+State 22
+
+    2 definition1: EXTERN VOID PRINT '(' INT ')' ';' •
+
+    $default  reduce using rule 2 (definition1)
+
+
+State 23
+
+    3 definition2: EXTERN INT READ '(' ')' ';' •
+
+    $default  reduce using rule 3 (definition2)
+
+
+State 24
+
+   49 func_def: INT STR '(' INT STR • ')' comnd_block
+
+    ')'  shift, and go to state 27
+
+
 State 25
 
    48 comnd_block: '{' • stmts '}'
 
-    INT     shift, and go to state 27
-    IF      shift, and go to state 28
-    WHILE   shift, and go to state 29
-    RETURN  shift, and go to state 30
-    STR     shift, and go to state 31
-    READ    shift, and go to state 32
-    PRINT   shift, and go to state 33
+    INT     shift, and go to state 28
+    IF      shift, and go to state 29
+    WHILE   shift, and go to state 30
+    RETURN  shift, and go to state 31
+    STR     shift, and go to state 32
+    READ    shift, and go to state 33
+    PRINT   shift, and go to state 34
     '{'     shift, and go to state 25
 
-    declaration       go to state 34
-    return_statement  go to state 35
-    assign            go to state 36
-    func_call         go to state 37
-    if_block          go to state 38
-    while_block       go to state 39
-    stmt              go to state 40
-    stmts             go to state 41
-    comnd_block       go to state 42
+    declaration       go to state 35
+    return_statement  go to state 36
+    assign            go to state 37
+    func_call         go to state 38
+    if_block          go to state 39
+    while_block       go to state 40
+    stmt              go to state 41
+    stmts             go to state 42
+    comnd_block       go to state 43
 
 
 State 26
 
-   49 func_def: INT STR '(' INT STR ')' comnd_block •
+   50 func_def: INT STR '(' ')' comnd_block •
 
-    $default  reduce using rule 49 (func_def)
+    $default  reduce using rule 50 (func_def)
 
 
 State 27
 
-    1 declaration: INT • STR ';'
+   49 func_def: INT STR '(' INT STR ')' • comnd_block
 
-    STR  shift, and go to state 43
+    '{'  shift, and go to state 25
+
+    comnd_block  go to state 44
 
 
 State 28
 
-   35 if_block: IF • '(' comparison ')' stmt
-   36         | IF • '(' comparison ')' stmt else_block
+    1 declaration: INT • STR ';'
 
-    '('  shift, and go to state 44
+    STR  shift, and go to state 45
 
 
 State 29
 
-   37 while_block: WHILE • '(' comparison ')' stmt
+   35 if_block: IF • '(' comparison ')' stmt
+   36         | IF • '(' comparison ')' stmt else_block
 
-    '('  shift, and go to state 45
+    '('  shift, and go to state 46
 
 
 State 30
 
-    4 return_statement: RETURN • term ';'
-    5                 | RETURN • expression
+   37 while_block: WHILE • '(' comparison ')' stmt
 
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
-
-    term        go to state 48
-    add         go to state 49
-    subtract    go to state 50
-    multiply    go to state 51
-    divide      go to state 52
-    expression  go to state 53
+    '('  shift, and go to state 47
 
 
 State 31
+
+    4 return_statement: RETURN • term ';'
+    5                 | RETURN • expression
+
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
+
+    term        go to state 50
+    add         go to state 51
+    subtract    go to state 52
+    multiply    go to state 53
+    divide      go to state 54
+    expression  go to state 55
+
+
+State 32
 
    28 assign: STR • '=' expression
    29       | STR • '=' NUM ';'
    30       | STR • '=' STR ';'
    31       | STR • '=' func_call
 
-    '='  shift, and go to state 54
-
-
-State 32
-
-   34 func_call: READ • '(' ')' ';'
-
-    '('  shift, and go to state 55
+    '='  shift, and go to state 56
 
 
 State 33
 
-   32 func_call: PRINT • '(' STR ')' ';'
-   33          | PRINT • '(' NUM ')' ';'
+   34 func_call: READ • '(' ')' ';'
 
-    '('  shift, and go to state 56
+    '('  shift, and go to state 57
 
 
 State 34
+
+   32 func_call: PRINT • '(' STR ')' ';'
+   33          | PRINT • '(' NUM ')' ';'
+
+    '('  shift, and go to state 58
+
+
+State 35
 
    42 stmt: declaration •
 
     $default  reduce using rule 42 (stmt)
 
 
-State 35
+State 36
 
    40 stmt: return_statement •
 
     $default  reduce using rule 40 (stmt)
 
 
-State 36
+State 37
 
    41 stmt: assign •
 
     $default  reduce using rule 41 (stmt)
 
 
-State 37
+State 38
 
    39 stmt: func_call •
 
     $default  reduce using rule 39 (stmt)
 
 
-State 38
+State 39
 
    43 stmt: if_block •
 
     $default  reduce using rule 43 (stmt)
 
 
-State 39
+State 40
 
    44 stmt: while_block •
 
     $default  reduce using rule 44 (stmt)
 
 
-State 40
+State 41
 
    47 stmts: stmt •
 
     $default  reduce using rule 47 (stmts)
 
 
-State 41
+State 42
 
    46 stmts: stmts • stmt
    48 comnd_block: '{' stmts • '}'
 
-    INT     shift, and go to state 27
-    IF      shift, and go to state 28
-    WHILE   shift, and go to state 29
-    RETURN  shift, and go to state 30
-    STR     shift, and go to state 31
-    READ    shift, and go to state 32
-    PRINT   shift, and go to state 33
+    INT     shift, and go to state 28
+    IF      shift, and go to state 29
+    WHILE   shift, and go to state 30
+    RETURN  shift, and go to state 31
+    STR     shift, and go to state 32
+    READ    shift, and go to state 33
+    PRINT   shift, and go to state 34
     '{'     shift, and go to state 25
-    '}'     shift, and go to state 57
+    '}'     shift, and go to state 59
 
-    declaration       go to state 34
-    return_statement  go to state 35
-    assign            go to state 36
-    func_call         go to state 37
-    if_block          go to state 38
-    while_block       go to state 39
-    stmt              go to state 58
-    comnd_block       go to state 42
+    declaration       go to state 35
+    return_statement  go to state 36
+    assign            go to state 37
+    func_call         go to state 38
+    if_block          go to state 39
+    while_block       go to state 40
+    stmt              go to state 60
+    comnd_block       go to state 43
 
 
-State 42
+State 43
 
    45 stmt: comnd_block •
 
     $default  reduce using rule 45 (stmt)
 
 
-State 43
-
-    1 declaration: INT STR • ';'
-
-    ';'  shift, and go to state 59
-
-
 State 44
 
-   35 if_block: IF '(' • comparison ')' stmt
-   36         | IF '(' • comparison ')' stmt else_block
+   49 func_def: INT STR '(' INT STR ')' comnd_block •
 
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
-
-    term        go to state 60
-    eq_cond     go to state 61
-    lt_cond     go to state 62
-    gt_cond     go to state 63
-    gteq_cond   go to state 64
-    lteq_cond   go to state 65
-    neq_cond    go to state 66
-    comparison  go to state 67
+    $default  reduce using rule 49 (func_def)
 
 
 State 45
 
-   37 while_block: WHILE '(' • comparison ')' stmt
+    1 declaration: INT STR • ';'
 
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
-
-    term        go to state 60
-    eq_cond     go to state 61
-    lt_cond     go to state 62
-    gt_cond     go to state 63
-    gteq_cond   go to state 64
-    lteq_cond   go to state 65
-    neq_cond    go to state 66
-    comparison  go to state 68
+    ';'  shift, and go to state 61
 
 
 State 46
+
+   35 if_block: IF '(' • comparison ')' stmt
+   36         | IF '(' • comparison ')' stmt else_block
+
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
+
+    term        go to state 62
+    eq_cond     go to state 63
+    lt_cond     go to state 64
+    gt_cond     go to state 65
+    gteq_cond   go to state 66
+    lteq_cond   go to state 67
+    neq_cond    go to state 68
+    comparison  go to state 69
+
+
+State 47
+
+   37 while_block: WHILE '(' • comparison ')' stmt
+
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
+
+    term        go to state 62
+    eq_cond     go to state 63
+    lt_cond     go to state 64
+    gt_cond     go to state 65
+    gteq_cond   go to state 66
+    lteq_cond   go to state 67
+    neq_cond    go to state 68
+    comparison  go to state 70
+
+
+State 48
 
     6 term: NUM •
 
     $default  reduce using rule 6 (term)
 
 
-State 47
+State 49
 
     7 term: STR •
 
     $default  reduce using rule 7 (term)
 
 
-State 48
+State 50
 
     4 return_statement: RETURN term • ';'
    20 add: term • '+' term ';'
@@ -623,107 +644,107 @@ State 48
    22 multiply: term • '*' term ';'
    23 divide: term • '/' term ';'
 
-    ';'  shift, and go to state 69
-    '+'  shift, and go to state 70
-    '-'  shift, and go to state 71
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
+    ';'  shift, and go to state 71
+    '+'  shift, and go to state 72
+    '-'  shift, and go to state 73
+    '*'  shift, and go to state 74
+    '/'  shift, and go to state 75
 
 
-State 49
+State 51
 
    24 expression: add •
 
     $default  reduce using rule 24 (expression)
 
 
-State 50
+State 52
 
    25 expression: subtract •
 
     $default  reduce using rule 25 (expression)
 
 
-State 51
+State 53
 
    26 expression: multiply •
 
     $default  reduce using rule 26 (expression)
 
 
-State 52
+State 54
 
    27 expression: divide •
 
     $default  reduce using rule 27 (expression)
 
 
-State 53
+State 55
 
     5 return_statement: RETURN expression •
 
     $default  reduce using rule 5 (return_statement)
 
 
-State 54
+State 56
 
    28 assign: STR '=' • expression
    29       | STR '=' • NUM ';'
    30       | STR '=' • STR ';'
    31       | STR '=' • func_call
 
-    NUM    shift, and go to state 74
-    STR    shift, and go to state 75
-    READ   shift, and go to state 32
-    PRINT  shift, and go to state 33
+    NUM    shift, and go to state 76
+    STR    shift, and go to state 77
+    READ   shift, and go to state 33
+    PRINT  shift, and go to state 34
 
-    term        go to state 76
-    add         go to state 49
-    subtract    go to state 50
-    multiply    go to state 51
-    divide      go to state 52
-    expression  go to state 77
-    func_call   go to state 78
+    term        go to state 78
+    add         go to state 51
+    subtract    go to state 52
+    multiply    go to state 53
+    divide      go to state 54
+    expression  go to state 79
+    func_call   go to state 80
 
 
-State 55
+State 57
 
    34 func_call: READ '(' • ')' ';'
 
-    ')'  shift, and go to state 79
+    ')'  shift, and go to state 81
 
 
-State 56
+State 58
 
    32 func_call: PRINT '(' • STR ')' ';'
    33          | PRINT '(' • NUM ')' ';'
 
-    NUM  shift, and go to state 80
-    STR  shift, and go to state 81
+    NUM  shift, and go to state 82
+    STR  shift, and go to state 83
 
 
-State 57
+State 59
 
    48 comnd_block: '{' stmts '}' •
 
     $default  reduce using rule 48 (comnd_block)
 
 
-State 58
+State 60
 
    46 stmts: stmts stmt •
 
     $default  reduce using rule 46 (stmts)
 
 
-State 59
+State 61
 
     1 declaration: INT STR ';' •
 
     $default  reduce using rule 1 (declaration)
 
 
-State 60
+State 62
 
     8 eq_cond: term • '=' '=' term
     9 lt_cond: term • '<' term
@@ -732,507 +753,507 @@ State 60
    12 lteq_cond: term • '<' '=' term
    13 neq_cond: term • '!' '=' term
 
-    '='  shift, and go to state 82
-    '<'  shift, and go to state 83
-    '>'  shift, and go to state 84
-    '!'  shift, and go to state 85
+    '='  shift, and go to state 84
+    '<'  shift, and go to state 85
+    '>'  shift, and go to state 86
+    '!'  shift, and go to state 87
 
 
-State 61
+State 63
 
    14 comparison: eq_cond •
 
     $default  reduce using rule 14 (comparison)
 
 
-State 62
+State 64
 
    15 comparison: lt_cond •
 
     $default  reduce using rule 15 (comparison)
 
 
-State 63
+State 65
 
    18 comparison: gt_cond •
 
     $default  reduce using rule 18 (comparison)
 
 
-State 64
+State 66
 
    17 comparison: gteq_cond •
 
     $default  reduce using rule 17 (comparison)
 
 
-State 65
+State 67
 
    16 comparison: lteq_cond •
 
     $default  reduce using rule 16 (comparison)
 
 
-State 66
+State 68
 
    19 comparison: neq_cond •
 
     $default  reduce using rule 19 (comparison)
 
 
-State 67
+State 69
 
    35 if_block: IF '(' comparison • ')' stmt
    36         | IF '(' comparison • ')' stmt else_block
 
-    ')'  shift, and go to state 86
+    ')'  shift, and go to state 88
 
 
-State 68
+State 70
 
    37 while_block: WHILE '(' comparison • ')' stmt
 
-    ')'  shift, and go to state 87
+    ')'  shift, and go to state 89
 
 
-State 69
+State 71
 
     4 return_statement: RETURN term ';' •
 
     $default  reduce using rule 4 (return_statement)
 
 
-State 70
+State 72
 
    20 add: term '+' • term ';'
 
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
-
-    term  go to state 88
-
-
-State 71
-
-   21 subtract: term '-' • term ';'
-
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
-
-    term  go to state 89
-
-
-State 72
-
-   22 multiply: term '*' • term ';'
-
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
 
     term  go to state 90
 
 
 State 73
 
-   23 divide: term '/' • term ';'
+   21 subtract: term '-' • term ';'
 
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
 
     term  go to state 91
 
 
 State 74
 
-    6 term: NUM •
-   29 assign: STR '=' NUM • ';'
+   22 multiply: term '*' • term ';'
 
-    ';'  shift, and go to state 92
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
 
-    $default  reduce using rule 6 (term)
+    term  go to state 92
 
 
 State 75
 
+   23 divide: term '/' • term ';'
+
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
+
+    term  go to state 93
+
+
+State 76
+
+    6 term: NUM •
+   29 assign: STR '=' NUM • ';'
+
+    ';'  shift, and go to state 94
+
+    $default  reduce using rule 6 (term)
+
+
+State 77
+
     7 term: STR •
    30 assign: STR '=' STR • ';'
 
-    ';'  shift, and go to state 93
+    ';'  shift, and go to state 95
 
     $default  reduce using rule 7 (term)
 
 
-State 76
+State 78
 
    20 add: term • '+' term ';'
    21 subtract: term • '-' term ';'
    22 multiply: term • '*' term ';'
    23 divide: term • '/' term ';'
 
-    '+'  shift, and go to state 70
-    '-'  shift, and go to state 71
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
+    '+'  shift, and go to state 72
+    '-'  shift, and go to state 73
+    '*'  shift, and go to state 74
+    '/'  shift, and go to state 75
 
 
-State 77
+State 79
 
    28 assign: STR '=' expression •
 
     $default  reduce using rule 28 (assign)
 
 
-State 78
+State 80
 
    31 assign: STR '=' func_call •
 
     $default  reduce using rule 31 (assign)
 
 
-State 79
+State 81
 
    34 func_call: READ '(' ')' • ';'
 
-    ';'  shift, and go to state 94
-
-
-State 80
-
-   33 func_call: PRINT '(' NUM • ')' ';'
-
-    ')'  shift, and go to state 95
-
-
-State 81
-
-   32 func_call: PRINT '(' STR • ')' ';'
-
-    ')'  shift, and go to state 96
+    ';'  shift, and go to state 96
 
 
 State 82
 
-    8 eq_cond: term '=' • '=' term
+   33 func_call: PRINT '(' NUM • ')' ';'
 
-    '='  shift, and go to state 97
+    ')'  shift, and go to state 97
 
 
 State 83
 
-    9 lt_cond: term '<' • term
-   12 lteq_cond: term '<' • '=' term
+   32 func_call: PRINT '(' STR • ')' ';'
 
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
-    '='  shift, and go to state 98
-
-    term  go to state 99
+    ')'  shift, and go to state 98
 
 
 State 84
 
-   10 gt_cond: term '>' • term
-   11 gteq_cond: term '>' • '=' term
+    8 eq_cond: term '=' • '=' term
 
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
+    '='  shift, and go to state 99
+
+
+State 85
+
+    9 lt_cond: term '<' • term
+   12 lteq_cond: term '<' • '=' term
+
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
     '='  shift, and go to state 100
 
     term  go to state 101
 
 
-State 85
-
-   13 neq_cond: term '!' • '=' term
-
-    '='  shift, and go to state 102
-
-
 State 86
 
-   35 if_block: IF '(' comparison ')' • stmt
-   36         | IF '(' comparison ')' • stmt else_block
+   10 gt_cond: term '>' • term
+   11 gteq_cond: term '>' • '=' term
 
-    INT     shift, and go to state 27
-    IF      shift, and go to state 28
-    WHILE   shift, and go to state 29
-    RETURN  shift, and go to state 30
-    STR     shift, and go to state 31
-    READ    shift, and go to state 32
-    PRINT   shift, and go to state 33
-    '{'     shift, and go to state 25
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
+    '='  shift, and go to state 102
 
-    declaration       go to state 34
-    return_statement  go to state 35
-    assign            go to state 36
-    func_call         go to state 37
-    if_block          go to state 38
-    while_block       go to state 39
-    stmt              go to state 103
-    comnd_block       go to state 42
+    term  go to state 103
 
 
 State 87
 
-   37 while_block: WHILE '(' comparison ')' • stmt
+   13 neq_cond: term '!' • '=' term
 
-    INT     shift, and go to state 27
-    IF      shift, and go to state 28
-    WHILE   shift, and go to state 29
-    RETURN  shift, and go to state 30
-    STR     shift, and go to state 31
-    READ    shift, and go to state 32
-    PRINT   shift, and go to state 33
-    '{'     shift, and go to state 25
-
-    declaration       go to state 34
-    return_statement  go to state 35
-    assign            go to state 36
-    func_call         go to state 37
-    if_block          go to state 38
-    while_block       go to state 39
-    stmt              go to state 104
-    comnd_block       go to state 42
+    '='  shift, and go to state 104
 
 
 State 88
 
-   20 add: term '+' term • ';'
+   35 if_block: IF '(' comparison ')' • stmt
+   36         | IF '(' comparison ')' • stmt else_block
 
-    ';'  shift, and go to state 105
+    INT     shift, and go to state 28
+    IF      shift, and go to state 29
+    WHILE   shift, and go to state 30
+    RETURN  shift, and go to state 31
+    STR     shift, and go to state 32
+    READ    shift, and go to state 33
+    PRINT   shift, and go to state 34
+    '{'     shift, and go to state 25
+
+    declaration       go to state 35
+    return_statement  go to state 36
+    assign            go to state 37
+    func_call         go to state 38
+    if_block          go to state 39
+    while_block       go to state 40
+    stmt              go to state 105
+    comnd_block       go to state 43
 
 
 State 89
 
-   21 subtract: term '-' term • ';'
+   37 while_block: WHILE '(' comparison ')' • stmt
 
-    ';'  shift, and go to state 106
+    INT     shift, and go to state 28
+    IF      shift, and go to state 29
+    WHILE   shift, and go to state 30
+    RETURN  shift, and go to state 31
+    STR     shift, and go to state 32
+    READ    shift, and go to state 33
+    PRINT   shift, and go to state 34
+    '{'     shift, and go to state 25
+
+    declaration       go to state 35
+    return_statement  go to state 36
+    assign            go to state 37
+    func_call         go to state 38
+    if_block          go to state 39
+    while_block       go to state 40
+    stmt              go to state 106
+    comnd_block       go to state 43
 
 
 State 90
 
-   22 multiply: term '*' term • ';'
+   20 add: term '+' term • ';'
 
     ';'  shift, and go to state 107
 
 
 State 91
 
-   23 divide: term '/' term • ';'
+   21 subtract: term '-' term • ';'
 
     ';'  shift, and go to state 108
 
 
 State 92
 
+   22 multiply: term '*' term • ';'
+
+    ';'  shift, and go to state 109
+
+
+State 93
+
+   23 divide: term '/' term • ';'
+
+    ';'  shift, and go to state 110
+
+
+State 94
+
    29 assign: STR '=' NUM ';' •
 
     $default  reduce using rule 29 (assign)
 
 
-State 93
+State 95
 
    30 assign: STR '=' STR ';' •
 
     $default  reduce using rule 30 (assign)
 
 
-State 94
+State 96
 
    34 func_call: READ '(' ')' ';' •
 
     $default  reduce using rule 34 (func_call)
 
 
-State 95
+State 97
 
    33 func_call: PRINT '(' NUM ')' • ';'
 
-    ';'  shift, and go to state 109
-
-
-State 96
-
-   32 func_call: PRINT '(' STR ')' • ';'
-
-    ';'  shift, and go to state 110
-
-
-State 97
-
-    8 eq_cond: term '=' '=' • term
-
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
-
-    term  go to state 111
+    ';'  shift, and go to state 111
 
 
 State 98
 
-   12 lteq_cond: term '<' '=' • term
+   32 func_call: PRINT '(' STR ')' • ';'
 
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
-
-    term  go to state 112
+    ';'  shift, and go to state 112
 
 
 State 99
+
+    8 eq_cond: term '=' '=' • term
+
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
+
+    term  go to state 113
+
+
+State 100
+
+   12 lteq_cond: term '<' '=' • term
+
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
+
+    term  go to state 114
+
+
+State 101
 
     9 lt_cond: term '<' term •
 
     $default  reduce using rule 9 (lt_cond)
 
 
-State 100
+State 102
 
    11 gteq_cond: term '>' '=' • term
 
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
 
-    term  go to state 113
+    term  go to state 115
 
 
-State 101
+State 103
 
    10 gt_cond: term '>' term •
 
     $default  reduce using rule 10 (gt_cond)
 
 
-State 102
+State 104
 
    13 neq_cond: term '!' '=' • term
 
-    NUM  shift, and go to state 46
-    STR  shift, and go to state 47
+    NUM  shift, and go to state 48
+    STR  shift, and go to state 49
 
-    term  go to state 114
+    term  go to state 116
 
 
-State 103
+State 105
 
    35 if_block: IF '(' comparison ')' stmt •
    36         | IF '(' comparison ')' stmt • else_block
 
-    ELSE  shift, and go to state 115
+    ELSE  shift, and go to state 117
 
     ELSE      [reduce using rule 35 (if_block)]
     $default  reduce using rule 35 (if_block)
 
-    else_block  go to state 116
+    else_block  go to state 118
 
 
-State 104
+State 106
 
    37 while_block: WHILE '(' comparison ')' stmt •
 
     $default  reduce using rule 37 (while_block)
 
 
-State 105
+State 107
 
    20 add: term '+' term ';' •
 
     $default  reduce using rule 20 (add)
 
 
-State 106
+State 108
 
    21 subtract: term '-' term ';' •
 
     $default  reduce using rule 21 (subtract)
 
 
-State 107
+State 109
 
    22 multiply: term '*' term ';' •
 
     $default  reduce using rule 22 (multiply)
 
 
-State 108
+State 110
 
    23 divide: term '/' term ';' •
 
     $default  reduce using rule 23 (divide)
 
 
-State 109
+State 111
 
    33 func_call: PRINT '(' NUM ')' ';' •
 
     $default  reduce using rule 33 (func_call)
 
 
-State 110
+State 112
 
    32 func_call: PRINT '(' STR ')' ';' •
 
     $default  reduce using rule 32 (func_call)
 
 
-State 111
+State 113
 
     8 eq_cond: term '=' '=' term •
 
     $default  reduce using rule 8 (eq_cond)
 
 
-State 112
+State 114
 
    12 lteq_cond: term '<' '=' term •
 
     $default  reduce using rule 12 (lteq_cond)
 
 
-State 113
+State 115
 
    11 gteq_cond: term '>' '=' term •
 
     $default  reduce using rule 11 (gteq_cond)
 
 
-State 114
+State 116
 
    13 neq_cond: term '!' '=' term •
 
     $default  reduce using rule 13 (neq_cond)
 
 
-State 115
+State 117
 
    38 else_block: ELSE • stmt
 
-    INT     shift, and go to state 27
-    IF      shift, and go to state 28
-    WHILE   shift, and go to state 29
-    RETURN  shift, and go to state 30
-    STR     shift, and go to state 31
-    READ    shift, and go to state 32
-    PRINT   shift, and go to state 33
+    INT     shift, and go to state 28
+    IF      shift, and go to state 29
+    WHILE   shift, and go to state 30
+    RETURN  shift, and go to state 31
+    STR     shift, and go to state 32
+    READ    shift, and go to state 33
+    PRINT   shift, and go to state 34
     '{'     shift, and go to state 25
 
-    declaration       go to state 34
-    return_statement  go to state 35
-    assign            go to state 36
-    func_call         go to state 37
-    if_block          go to state 38
-    while_block       go to state 39
-    stmt              go to state 117
-    comnd_block       go to state 42
+    declaration       go to state 35
+    return_statement  go to state 36
+    assign            go to state 37
+    func_call         go to state 38
+    if_block          go to state 39
+    while_block       go to state 40
+    stmt              go to state 119
+    comnd_block       go to state 43
 
 
-State 116
+State 118
 
    36 if_block: IF '(' comparison ')' stmt else_block •
 
     $default  reduce using rule 36 (if_block)
 
 
-State 117
+State 119
 
    38 else_block: ELSE stmt •
 

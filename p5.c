@@ -5,10 +5,12 @@ int func(int i){
 	int a;
 	int b;
 	
-	while (a < i){
-		int a;
-		a = print(a);
-		b = 10 + a;
+	while (a < c){
+		int y;
 		print(a);
+		b = 10 + a;
+		print(f);
 	}
+	print(y);
+	print(i);
 }

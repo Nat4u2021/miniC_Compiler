@@ -1,12 +1,16 @@
 %{
 #include <stdio.h>
 #include "ast.h"
+#include <stack>
+#include <iostream>
+#include <cstring>
 void yyerror(const char *);
 extern int yylex();
 extern int yylex_destroy();
 extern FILE *yyin;
 extern int yylineno;
 extern char* yytext;
+astNode *root;
 %}
 
 %union{
@@ -26,9 +30,9 @@ extern char* yytext;
 %%
 declaration : INT STR ';' {$$ = createDecl($2);}
 
-definition1 : EXTERN VOID PRINT '(' INT ')' ';' {$$ = createExtern($3);} 
+definition1 : EXTERN VOID PRINT '(' INT ')' ';' {$$ = createExtern($3); freeExtern($$);} 
 
-definition2 : EXTERN INT READ '(' ')' ';' {$$ = createExtern($3);} 
+definition2 : EXTERN INT READ '(' ')' ';' {$$ = createExtern($3); freeExtern($$);} 
 
 return_statement : RETURN term ';' {$$ = createRet($2);} | RETURN expression {$$ = createRet($2);}
 
@@ -75,14 +79,118 @@ else_block : ELSE stmt {$$ = $2;}
 
 stmt : func_call {$$ = $1;} | return_statement {$$ = $1;} | assign {$$ = $1;} | declaration  {$$ = $1;}| if_block  {$$ = $1;} | while_block  {$$ = $1;} | comnd_block {$$ = $1;}
 
-stmts : stmts stmt {$$ = $1; $$->push_back($2);} | stmt {$$ = new vector<astNode*> (); $$->push_back($1);}
+stmts : stmts stmt {$$ = $1; $$->push_back($2);} | stmt {$$ = new vector<astNode*>(); $$->push_back($1);}
 
-comnd_block : '{' stmts '}' {$$ = createBlock($2); printNode($$);}
+comnd_block : '{' stmts '}' {$$ = createBlock($2);}
 
-func_def : INT STR '(' INT STR ')' comnd_block {astNode* tnptr = createVar($5); $$ = createFunc($2, tnptr , $7);}
+func_def : INT STR '(' INT STR ')' comnd_block  {astNode* tnptr = createVar($5); $$ = createFunc($2, tnptr , $7);} |  INT STR '('')' comnd_block {$$ = createFunc($2, NULL, $5);} 
 
-program : definition1 definition2 func_def {$$ = createProg($1, $2, $3); printNode($$);}
+program : definition1 definition2 func_def {$$ = createProg($1, $2, $3); root = $$;}
 %%
+
+bool check(vector<vector<char*>*> stackOfVectors, char* searchString) {
+    for (vector<char*>* topVector: stackOfVectors) { // loop until stack is empty
+        for (char* s : *topVector) { // loop through the elements of the top vector
+            if (strcmp(s, searchString) == 0) { // if the search string is found in the top vector, return true
+                return true;
+            }
+        }
+    }
+    return false; // if the search string was not found in any vector, return false
+}
+
+void helper(vector<astNode*> nodes, vector<vector<char*>*> temp){
+	while (!nodes.empty()){
+		vector<char*> *currvector = new vector<char*>();
+		astNode* currnode = nodes.front();
+		nodes.erase(nodes.begin());
+	
+		if (currnode->type == ast_stmt){
+			if (currnode->stmt.type == ast_block){
+				temp.push_back(currvector);
+				helper(*currnode->stmt.block.stmt_list, temp);
+				temp.pop_back();
+			}
+			else if (currnode->stmt.type == ast_decl){
+				currvector = temp.back();
+				currvector->push_back(currnode->stmt.decl.name);
+			}
+			else if (currnode->stmt.type == ast_call){
+				vector<astNode*> newnodes;
+				newnodes.push_back(currnode->stmt.call.param);
+				helper(newnodes, temp);				
+			}
+			else if (currnode->stmt.type == ast_ret){
+				printf("in return\n");
+				vector<astNode*> newnodes;
+				newnodes.push_back(currnode->stmt.ret.expr);
+				helper(newnodes, temp);				
+			}
+			else if (currnode->stmt.type == ast_while){
+				vector<astNode*> newnodes;
+				newnodes.push_back(currnode->stmt.whilen.cond);
+				newnodes.push_back(currnode->stmt.whilen.body);
+				helper(newnodes, temp);				
+			}
+			else if (currnode->stmt.type == ast_if){
+				vector<astNode*> newnodes;
+				newnodes.push_back(currnode->stmt.ifn.cond);
+				newnodes.push_back(currnode->stmt.ifn.if_body);
+				if (currnode->stmt.ifn.else_body != NULL) newnodes.push_back(currnode->stmt.ifn.else_body);
+				helper(newnodes, temp);				
+			}
+			else if (currnode->stmt.type == ast_asgn){
+				vector<astNode*> newnodes;
+				newnodes.push_back(currnode->stmt.asgn.lhs);
+				newnodes.push_back(currnode->stmt.asgn.rhs);
+				helper(newnodes, temp);				
+			}						
+		}
+		else if (currnode->type == ast_var){
+			bool declared = check(temp, currnode->var.name);
+			if (!declared){
+				printf("ERROR: variable %s has not been declared\n", currnode->var.name);
+			}
+		}
+		else if (currnode->type == ast_rexpr){
+			vector<astNode*> newnodes;
+			newnodes.push_back(currnode->rexpr.lhs);
+			newnodes.push_back(currnode->rexpr.rhs);
+			helper(newnodes, temp);
+		}
+		else if (currnode->type == ast_bexpr){
+			vector<astNode*> newnodes;
+			newnodes.push_back(currnode->bexpr.lhs);
+			newnodes.push_back(currnode->bexpr.rhs);
+			helper(newnodes, temp);
+		}
+		else if (currnode->type == ast_uexpr){
+			vector<astNode*> newnodes;
+			newnodes.push_back(currnode->uexpr.expr);
+			helper(newnodes, temp);
+		}		
+	}
+	return;
+}
+
+void semantic_analysis(astNode *root){
+
+	vector<vector<char*>*> symbol_table_stack;
+	vector<char*> *currvector = new vector<char*> ();
+	symbol_table_stack.push_back(currvector);
+
+	if (root->func.param != NULL){
+		currvector->push_back(root->func.param->var.name);
+	}
+
+	root = root->func.body;
+	vector<astNode*> nodes = *root->stmt.block.stmt_list;
+
+	helper(nodes, symbol_table_stack);
+
+	symbol_table_stack.pop_back();
+}
+
 
 int main(int argc, char** argv){
 	if (argc == 2){
@@ -91,6 +199,8 @@ int main(int argc, char** argv){
 
 	yyparse();
 
+	semantic_analysis(root->prog.func);
+
 	if (yyin != stdin)
 		fclose(yyin);
 
@@ -98,7 +208,6 @@ int main(int argc, char** argv){
 	
 	return 0;
 }
-
 
 void yyerror(const char *){
 	fprintf(stdout, "Syntax error %d\n", yylineno);
