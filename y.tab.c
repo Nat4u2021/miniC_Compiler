@@ -232,17 +232,18 @@ enum yysymbol_kind_t
   YYSYMBOL_subtract = 41,                  /* subtract  */
   YYSYMBOL_multiply = 42,                  /* multiply  */
   YYSYMBOL_divide = 43,                    /* divide  */
-  YYSYMBOL_expression = 44,                /* expression  */
-  YYSYMBOL_assign = 45,                    /* assign  */
-  YYSYMBOL_func_call = 46,                 /* func_call  */
-  YYSYMBOL_if_block = 47,                  /* if_block  */
-  YYSYMBOL_while_block = 48,               /* while_block  */
-  YYSYMBOL_else_block = 49,                /* else_block  */
-  YYSYMBOL_stmt = 50,                      /* stmt  */
-  YYSYMBOL_stmts = 51,                     /* stmts  */
-  YYSYMBOL_comnd_block = 52,               /* comnd_block  */
-  YYSYMBOL_func_def = 53,                  /* func_def  */
-  YYSYMBOL_program = 54                    /* program  */
+  YYSYMBOL_unary = 44,                     /* unary  */
+  YYSYMBOL_expression = 45,                /* expression  */
+  YYSYMBOL_assign = 46,                    /* assign  */
+  YYSYMBOL_func_call = 47,                 /* func_call  */
+  YYSYMBOL_if_block = 48,                  /* if_block  */
+  YYSYMBOL_while_block = 49,               /* while_block  */
+  YYSYMBOL_else_block = 50,                /* else_block  */
+  YYSYMBOL_stmt = 51,                      /* stmt  */
+  YYSYMBOL_stmts = 52,                     /* stmts  */
+  YYSYMBOL_comnd_block = 53,               /* comnd_block  */
+  YYSYMBOL_func_def = 54,                  /* func_def  */
+  YYSYMBOL_program = 55                    /* program  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -570,16 +571,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  7
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   112
+#define YYLAST   118
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  27
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  28
+#define YYNNTS  29
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  52
+#define YYNRULES  54
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  120
+#define YYNSTATES  124
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   268
@@ -631,10 +632,10 @@ static const yytype_int8 yyrline[] =
 {
        0,    31,    31,    33,    35,    37,    37,    39,    39,    41,
       43,    45,    47,    49,    51,    53,    53,    53,    53,    53,
-      53,    55,    57,    59,    61,    63,    63,    63,    63,    65,
-      66,    67,    68,    70,    71,    72,    74,    74,    76,    78,
-      80,    80,    80,    80,    80,    80,    80,    82,    82,    84,
-      86,    86,    88
+      53,    55,    57,    59,    61,    63,    65,    65,    65,    65,
+      65,    67,    68,    69,    70,    72,    73,    74,    76,    76,
+      78,    80,    82,    82,    82,    82,    82,    82,    82,    84,
+      84,    86,    88,    88,    90
 };
 #endif
 
@@ -656,8 +657,9 @@ static const char *const yytname[] =
   "'{'", "'}'", "$accept", "declaration", "definition1", "definition2",
   "return_statement", "term", "eq_cond", "lt_cond", "gt_cond", "gteq_cond",
   "lteq_cond", "neq_cond", "comparison", "add", "subtract", "multiply",
-  "divide", "expression", "assign", "func_call", "if_block", "while_block",
-  "else_block", "stmt", "stmts", "comnd_block", "func_def", "program", YY_NULLPTR
+  "divide", "unary", "expression", "assign", "func_call", "if_block",
+  "while_block", "else_block", "stmt", "stmts", "comnd_block", "func_def",
+  "program", YY_NULLPTR
 };
 
 static const char *
@@ -681,18 +683,19 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       4,     5,    13,    39,    28,    51,    58,   -43,    52,    54,
-      57,   -43,    68,    61,    62,    63,    64,     3,    59,    67,
-      71,    53,   -43,   -43,    69,    10,   -43,    53,    72,    73,
-      74,    26,    70,    75,    76,   -43,   -43,   -43,   -43,   -43,
-     -43,   -43,    -1,   -43,   -43,    78,    26,    26,   -43,   -43,
-       6,   -43,   -43,   -43,   -43,   -43,    38,    77,    42,   -43,
-     -43,   -43,    40,   -43,   -43,   -43,   -43,   -43,   -43,    79,
-      80,   -43,    26,    26,    26,    26,    83,    84,    41,   -43,
-     -43,    85,    86,    87,    88,    21,    23,    89,    10,    10,
-      90,    93,    94,    95,   -43,   -43,   -43,    96,    97,    26,
-      26,   -43,    26,   -43,    26,   105,   -43,   -43,   -43,   -43,
-     -43,   -43,   -43,   -43,   -43,   -43,   -43,    10,   -43,   -43
+       4,     5,    13,    39,    29,    54,    61,   -43,    56,    60,
+      64,   -43,    74,    65,    66,    67,    68,     3,    71,    72,
+      76,    57,   -43,   -43,    73,    10,   -43,    57,    77,    75,
+      78,    16,    79,    80,    82,   -43,   -43,   -43,   -43,   -43,
+     -43,   -43,    -1,   -43,   -43,    84,    45,    45,   -43,   -43,
+      45,    30,   -43,   -43,   -43,   -43,   -43,   -43,    19,    83,
+      59,   -43,   -43,   -43,    43,   -43,   -43,   -43,   -43,   -43,
+     -43,    85,    86,    89,   -43,    45,    45,    45,    45,    90,
+      91,    44,   -43,   -43,    92,    93,    94,    95,    23,    26,
+      96,    10,    10,   -43,    97,   100,   101,   102,   -43,   -43,
+     -43,   103,   104,    45,    45,   -43,    45,   -43,    45,    87,
+     -43,   -43,   -43,   -43,   -43,   -43,   -43,   -43,   -43,   -43,
+     -43,    10,   -43,   -43
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -701,33 +704,34 @@ static const yytype_int8 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     0,     0,     0,     0,     1,     0,     0,
-       0,    52,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     3,     4,     0,     0,    51,     0,     0,     0,
-       0,     0,     0,     0,     0,    43,    41,    42,    40,    44,
-      45,    48,     0,    46,    50,     0,     0,     0,     7,     8,
-       0,    25,    26,    27,    28,     6,     0,     0,     0,    49,
-      47,     2,     0,    15,    16,    19,    18,    17,    20,     0,
-       0,     5,     0,     0,     0,     0,     7,     8,     0,    29,
-      32,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,    30,    31,    35,     0,     0,     0,
-       0,    10,     0,    11,     0,    36,    38,    21,    22,    23,
-      24,    34,    33,     9,    13,    12,    14,     0,    37,    39
+       0,    54,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     3,     4,     0,     0,    53,     0,     0,     0,
+       0,     0,     0,     0,     0,    45,    43,    44,    42,    46,
+      47,    50,     0,    48,    52,     0,     0,     0,     7,     8,
+       0,     0,    26,    27,    28,    29,    30,     6,     0,     0,
+       0,    51,    49,     2,     0,    15,    16,    19,    18,    17,
+      20,     0,     0,     0,     5,     0,     0,     0,     0,     7,
+       8,     0,    31,    34,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,    25,     0,     0,     0,     0,    32,    33,
+      37,     0,     0,     0,     0,    10,     0,    11,     0,    38,
+      40,    21,    22,    23,    24,    36,    35,     9,    13,    12,
+      14,     0,    39,    41
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
      -43,   -43,   -43,   -43,   -43,   -30,   -43,   -43,   -43,   -43,
-     -43,   -43,    37,   -43,   -43,   -43,   -43,    30,   -43,    44,
-     -43,   -43,   -43,   -42,   -43,   -18,   -43,   -43
+     -43,   -43,    53,   -43,   -43,   -43,   -43,   -43,    33,   -43,
+      34,   -43,   -43,   -43,   -42,   -43,   -18,   -43,   -43
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,    35,     2,     6,    36,    62,    63,    64,    65,    66,
-      67,    68,    69,    51,    52,    53,    54,    55,    37,    38,
-      39,    40,   118,    41,    42,    43,    11,     3
+       0,    35,     2,     6,    36,    64,    65,    66,    67,    68,
+      69,    70,    71,    52,    53,    54,    55,    56,    57,    37,
+      38,    39,    40,   122,    41,    42,    43,    11,     3
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -735,52 +739,53 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      60,    50,    28,    26,    29,    30,    20,    31,     1,    44,
+      62,    51,    28,    26,    29,    30,    20,    31,     1,    44,
       32,    33,    34,    28,     4,    29,    30,     5,    31,    21,
-      71,    32,    33,    34,    25,    59,    78,    72,    73,    74,
-      75,    48,    49,    48,    49,    25,    48,    49,   100,     7,
-     102,     8,    90,    91,    92,    93,   105,   106,    76,    77,
-      33,    34,    82,    83,     9,   101,   103,    84,    85,    86,
-      87,    10,    72,    73,    74,    75,    13,    12,    14,   113,
-     114,    15,   115,    22,   116,   119,    16,    17,    25,    18,
-      19,    23,    24,    45,    70,    27,    79,    56,    46,    47,
-      57,    58,    61,    81,     0,    88,    89,    94,    95,    96,
-      80,     0,    97,    98,   107,    99,   104,   108,   109,   110,
-     111,   112,   117
+      73,    32,    33,    34,    25,    61,    48,    49,    81,    79,
+      80,    33,    34,    48,    49,    25,    48,    49,    50,     7,
+     104,    50,     8,   106,    74,    94,    95,    96,    97,   109,
+     110,    75,    76,    77,    78,    48,    49,     9,   105,   107,
+      87,    88,    89,    90,    10,    75,    76,    77,    78,    85,
+      86,    12,    13,   117,   118,    14,   119,    15,   120,   123,
+      16,    17,    25,    18,    19,    22,    23,    24,    45,    27,
+      46,    82,    83,    47,   121,    59,    58,    60,    63,    84,
+      72,    91,    92,    93,    98,    99,   100,     0,     0,   101,
+     102,   111,   103,   108,   112,   113,   114,   115,   116
 };
 
 static const yytype_int8 yycheck[] =
 {
       42,    31,     3,    21,     5,     6,     3,     8,     4,    27,
       11,    12,    13,     3,     9,     5,     6,     4,     8,    16,
-      14,    11,    12,    13,    25,    26,    56,    21,    22,    23,
-      24,    10,    11,    10,    11,    25,    10,    11,    17,     0,
-      17,    13,    72,    73,    74,    75,    88,    89,    10,    11,
-      12,    13,    10,    11,     3,    85,    86,    17,    18,    19,
-      20,     3,    21,    22,    23,    24,    12,    15,    11,    99,
-     100,     3,   102,    14,   104,   117,    15,    15,    25,    16,
-      16,    14,    11,    11,    47,    16,    56,    17,    15,    15,
-      15,    15,    14,    16,    -1,    16,    16,    14,    14,    14,
-      56,    -1,    16,    16,    14,    17,    17,    14,    14,    14,
-      14,    14,     7
+      50,    11,    12,    13,    25,    26,    10,    11,    58,    10,
+      11,    12,    13,    10,    11,    25,    10,    11,    22,     0,
+      17,    22,    13,    17,    14,    75,    76,    77,    78,    91,
+      92,    21,    22,    23,    24,    10,    11,     3,    88,    89,
+      17,    18,    19,    20,     3,    21,    22,    23,    24,    10,
+      11,    15,    12,   103,   104,    11,   106,     3,   108,   121,
+      15,    15,    25,    16,    16,    14,    14,    11,    11,    16,
+      15,    58,    58,    15,     7,    15,    17,    15,    14,    16,
+      47,    16,    16,    14,    14,    14,    14,    -1,    -1,    16,
+      16,    14,    17,    17,    14,    14,    14,    14,    14
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     4,    29,    54,     9,     4,    30,     0,    13,     3,
-       3,    53,    15,    12,    11,     3,    15,    15,    16,    16,
-       3,    16,    14,    14,    11,    25,    52,    16,     3,     5,
-       6,     8,    11,    12,    13,    28,    31,    45,    46,    47,
-      48,    50,    51,    52,    52,    11,    15,    15,    10,    11,
-      32,    40,    41,    42,    43,    44,    17,    15,    15,    26,
-      50,    14,    32,    33,    34,    35,    36,    37,    38,    39,
-      39,    14,    21,    22,    23,    24,    10,    11,    32,    44,
-      46,    16,    10,    11,    17,    18,    19,    20,    16,    16,
-      32,    32,    32,    32,    14,    14,    14,    16,    16,    17,
-      17,    32,    17,    32,    17,    50,    50,    14,    14,    14,
-      14,    14,    14,    32,    32,    32,    32,     7,    49,    50
+       0,     4,    29,    55,     9,     4,    30,     0,    13,     3,
+       3,    54,    15,    12,    11,     3,    15,    15,    16,    16,
+       3,    16,    14,    14,    11,    25,    53,    16,     3,     5,
+       6,     8,    11,    12,    13,    28,    31,    46,    47,    48,
+      49,    51,    52,    53,    53,    11,    15,    15,    10,    11,
+      22,    32,    40,    41,    42,    43,    44,    45,    17,    15,
+      15,    26,    51,    14,    32,    33,    34,    35,    36,    37,
+      38,    39,    39,    32,    14,    21,    22,    23,    24,    10,
+      11,    32,    45,    47,    16,    10,    11,    17,    18,    19,
+      20,    16,    16,    14,    32,    32,    32,    32,    14,    14,
+      14,    16,    16,    17,    17,    32,    17,    32,    17,    51,
+      51,    14,    14,    14,    14,    14,    14,    32,    32,    32,
+      32,     7,    50,    51
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -788,10 +793,10 @@ static const yytype_int8 yyr1[] =
 {
        0,    27,    28,    29,    30,    31,    31,    32,    32,    33,
       34,    35,    36,    37,    38,    39,    39,    39,    39,    39,
-      39,    40,    41,    42,    43,    44,    44,    44,    44,    45,
-      45,    45,    45,    46,    46,    46,    47,    47,    48,    49,
-      50,    50,    50,    50,    50,    50,    50,    51,    51,    52,
-      53,    53,    54
+      39,    40,    41,    42,    43,    44,    45,    45,    45,    45,
+      45,    46,    46,    46,    46,    47,    47,    47,    48,    48,
+      49,    50,    51,    51,    51,    51,    51,    51,    51,    52,
+      52,    53,    54,    54,    55
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -799,10 +804,10 @@ static const yytype_int8 yyr2[] =
 {
        0,     2,     3,     7,     6,     3,     2,     1,     1,     4,
        3,     3,     4,     4,     4,     1,     1,     1,     1,     1,
-       1,     4,     4,     4,     4,     1,     1,     1,     1,     3,
-       4,     4,     3,     5,     5,     4,     5,     6,     5,     2,
-       1,     1,     1,     1,     1,     1,     1,     2,     1,     3,
-       7,     5,     3
+       1,     4,     4,     4,     4,     3,     1,     1,     1,     1,
+       1,     3,     4,     4,     3,     5,     5,     4,     5,     6,
+       5,     2,     1,     1,     1,     1,     1,     1,     1,     2,
+       1,     3,     7,     5,     3
 };
 
 
@@ -1268,311 +1273,323 @@ yyreduce:
   case 2: /* declaration: INT STR ';'  */
 #line 31 "miniC.y"
                           {(yyval.nptr) = createDecl((yyvsp[-1].sname));}
-#line 1272 "y.tab.c"
+#line 1277 "y.tab.c"
     break;
 
   case 3: /* definition1: EXTERN VOID PRINT '(' INT ')' ';'  */
 #line 33 "miniC.y"
                                                 {(yyval.nptr) = createExtern((yyvsp[-4].sname)); freeExtern((yyval.nptr));}
-#line 1278 "y.tab.c"
+#line 1283 "y.tab.c"
     break;
 
   case 4: /* definition2: EXTERN INT READ '(' ')' ';'  */
 #line 35 "miniC.y"
                                           {(yyval.nptr) = createExtern((yyvsp[-3].sname)); freeExtern((yyval.nptr));}
-#line 1284 "y.tab.c"
+#line 1289 "y.tab.c"
     break;
 
   case 5: /* return_statement: RETURN term ';'  */
 #line 37 "miniC.y"
                                    {(yyval.nptr) = createRet((yyvsp[-1].nptr));}
-#line 1290 "y.tab.c"
+#line 1295 "y.tab.c"
     break;
 
   case 6: /* return_statement: RETURN expression  */
 #line 37 "miniC.y"
                                                                              {(yyval.nptr) = createRet((yyvsp[0].nptr));}
-#line 1296 "y.tab.c"
+#line 1301 "y.tab.c"
     break;
 
   case 7: /* term: NUM  */
 #line 39 "miniC.y"
           {(yyval.nptr) = createCnst((yyvsp[0].ival));}
-#line 1302 "y.tab.c"
+#line 1307 "y.tab.c"
     break;
 
   case 8: /* term: STR  */
 #line 39 "miniC.y"
                                         {(yyval.nptr) = createVar((yyvsp[0].sname));}
-#line 1308 "y.tab.c"
+#line 1313 "y.tab.c"
     break;
 
   case 9: /* eq_cond: term '=' '=' term  */
 #line 41 "miniC.y"
                            {(yyval.nptr) = createRExpr((yyvsp[-3].nptr), (yyvsp[0].nptr), eq);}
-#line 1314 "y.tab.c"
+#line 1319 "y.tab.c"
     break;
 
   case 10: /* lt_cond: term '<' term  */
 #line 43 "miniC.y"
                          {(yyval.nptr) = createRExpr((yyvsp[-2].nptr), (yyvsp[0].nptr), lt);}
-#line 1320 "y.tab.c"
+#line 1325 "y.tab.c"
     break;
 
   case 11: /* gt_cond: term '>' term  */
 #line 45 "miniC.y"
                          {(yyval.nptr) = createRExpr((yyvsp[-2].nptr), (yyvsp[0].nptr), gt);}
-#line 1326 "y.tab.c"
+#line 1331 "y.tab.c"
     break;
 
   case 12: /* gteq_cond: term '>' '=' term  */
 #line 47 "miniC.y"
                              {(yyval.nptr) = createRExpr((yyvsp[-3].nptr), (yyvsp[0].nptr), ge);}
-#line 1332 "y.tab.c"
+#line 1337 "y.tab.c"
     break;
 
   case 13: /* lteq_cond: term '<' '=' term  */
 #line 49 "miniC.y"
                              {(yyval.nptr) = createRExpr((yyvsp[-3].nptr), (yyvsp[0].nptr), le);}
-#line 1338 "y.tab.c"
+#line 1343 "y.tab.c"
     break;
 
   case 14: /* neq_cond: term '!' '=' term  */
 #line 51 "miniC.y"
                             {(yyval.nptr) = createRExpr((yyvsp[-3].nptr), (yyvsp[0].nptr), neq);}
-#line 1344 "y.tab.c"
+#line 1349 "y.tab.c"
     break;
 
   case 15: /* comparison: eq_cond  */
 #line 53 "miniC.y"
                      {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1350 "y.tab.c"
+#line 1355 "y.tab.c"
     break;
 
   case 16: /* comparison: lt_cond  */
 #line 53 "miniC.y"
                                           {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1356 "y.tab.c"
+#line 1361 "y.tab.c"
     break;
 
   case 17: /* comparison: lteq_cond  */
 #line 53 "miniC.y"
                                                                  {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1362 "y.tab.c"
+#line 1367 "y.tab.c"
     break;
 
   case 18: /* comparison: gteq_cond  */
 #line 53 "miniC.y"
                                                                                         {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1368 "y.tab.c"
+#line 1373 "y.tab.c"
     break;
 
   case 19: /* comparison: gt_cond  */
 #line 53 "miniC.y"
                                                                                                             {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1374 "y.tab.c"
+#line 1379 "y.tab.c"
     break;
 
   case 20: /* comparison: neq_cond  */
 #line 53 "miniC.y"
                                                                                                                                   {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1380 "y.tab.c"
+#line 1385 "y.tab.c"
     break;
 
   case 21: /* add: term '+' term ';'  */
 #line 55 "miniC.y"
                         {(yyval.nptr) = createBExpr((yyvsp[-3].nptr), (yyvsp[-1].nptr), add);}
-#line 1386 "y.tab.c"
+#line 1391 "y.tab.c"
     break;
 
   case 22: /* subtract: term '-' term ';'  */
 #line 57 "miniC.y"
                               {(yyval.nptr) = createBExpr((yyvsp[-3].nptr), (yyvsp[-1].nptr), sub);}
-#line 1392 "y.tab.c"
+#line 1397 "y.tab.c"
     break;
 
   case 23: /* multiply: term '*' term ';'  */
 #line 59 "miniC.y"
                               {(yyval.nptr) = createBExpr((yyvsp[-3].nptr), (yyvsp[-1].nptr), mul);}
-#line 1398 "y.tab.c"
+#line 1403 "y.tab.c"
     break;
 
   case 24: /* divide: term '/' term ';'  */
 #line 61 "miniC.y"
                               {(yyval.nptr) = createBExpr((yyvsp[-3].nptr), (yyvsp[-1].nptr), divide);}
-#line 1404 "y.tab.c"
+#line 1409 "y.tab.c"
     break;
 
-  case 25: /* expression: add  */
+  case 25: /* unary: '-' term ';'  */
 #line 63 "miniC.y"
-                 {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1410 "y.tab.c"
+                     {(yyval.nptr) = createUExpr((yyvsp[-1].nptr), sub);}
+#line 1415 "y.tab.c"
     break;
 
-  case 26: /* expression: subtract  */
-#line 63 "miniC.y"
-                                      {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1416 "y.tab.c"
-    break;
-
-  case 27: /* expression: multiply  */
-#line 63 "miniC.y"
-                                                            {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1422 "y.tab.c"
-    break;
-
-  case 28: /* expression: divide  */
-#line 63 "miniC.y"
-                                                                                 {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1428 "y.tab.c"
-    break;
-
-  case 29: /* assign: STR '=' expression  */
+  case 26: /* expression: add  */
 #line 65 "miniC.y"
-                            {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createAsgn(tnptr, (yyvsp[0].nptr));}
-#line 1434 "y.tab.c"
-    break;
-
-  case 30: /* assign: STR '=' NUM ';'  */
-#line 66 "miniC.y"
-                                   {astNode* tnptr = createVar((yyvsp[-3].sname)); astNode* tnptr2 = createCnst((yyvsp[-1].ival)); (yyval.nptr) = createAsgn(tnptr, tnptr2);}
-#line 1440 "y.tab.c"
-    break;
-
-  case 31: /* assign: STR '=' STR ';'  */
-#line 67 "miniC.y"
-                                   {astNode* tnptr = createVar((yyvsp[-3].sname)); astNode* tnptr2 = createVar((yyvsp[-1].sname)); (yyval.nptr) = createAsgn(tnptr, tnptr2);}
-#line 1446 "y.tab.c"
-    break;
-
-  case 32: /* assign: STR '=' func_call  */
-#line 68 "miniC.y"
-                                    {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createAsgn(tnptr, (yyvsp[0].nptr));}
-#line 1452 "y.tab.c"
-    break;
-
-  case 33: /* func_call: PRINT '(' STR ')' ';'  */
-#line 70 "miniC.y"
-                                   {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createCall((yyvsp[-4].sname), tnptr);}
-#line 1458 "y.tab.c"
-    break;
-
-  case 34: /* func_call: PRINT '(' NUM ')' ';'  */
-#line 71 "miniC.y"
-                                                {astNode* tnptr = createCnst((yyvsp[-2].ival)); (yyval.nptr) = createCall((yyvsp[-4].sname), tnptr);}
-#line 1464 "y.tab.c"
-    break;
-
-  case 35: /* func_call: READ '(' ')' ';'  */
-#line 72 "miniC.y"
-                                          {(yyval.nptr) = createCall((yyvsp[-3].sname));}
-#line 1470 "y.tab.c"
-    break;
-
-  case 36: /* if_block: IF '(' comparison ')' stmt  */
-#line 74 "miniC.y"
-                                      {(yyval.nptr) = createIf((yyvsp[-2].nptr), (yyvsp[0].nptr));}
-#line 1476 "y.tab.c"
-    break;
-
-  case 37: /* if_block: IF '(' comparison ')' stmt else_block  */
-#line 74 "miniC.y"
-                                                                                                       {(yyval.nptr) = createIf((yyvsp[-3].nptr), (yyvsp[-1].nptr), (yyvsp[0].nptr));}
-#line 1482 "y.tab.c"
-    break;
-
-  case 38: /* while_block: WHILE '(' comparison ')' stmt  */
-#line 76 "miniC.y"
-                                            {(yyval.nptr) = createWhile((yyvsp[-2].nptr), (yyvsp[0].nptr));}
-#line 1488 "y.tab.c"
-    break;
-
-  case 39: /* else_block: ELSE stmt  */
-#line 78 "miniC.y"
-                       {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1494 "y.tab.c"
-    break;
-
-  case 40: /* stmt: func_call  */
-#line 80 "miniC.y"
                  {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1500 "y.tab.c"
+#line 1421 "y.tab.c"
     break;
 
-  case 41: /* stmt: return_statement  */
+  case 27: /* expression: subtract  */
+#line 65 "miniC.y"
+                                      {(yyval.nptr) = (yyvsp[0].nptr);}
+#line 1427 "y.tab.c"
+    break;
+
+  case 28: /* expression: multiply  */
+#line 65 "miniC.y"
+                                                            {(yyval.nptr) = (yyvsp[0].nptr);}
+#line 1433 "y.tab.c"
+    break;
+
+  case 29: /* expression: divide  */
+#line 65 "miniC.y"
+                                                                                 {(yyval.nptr) = (yyvsp[0].nptr);}
+#line 1439 "y.tab.c"
+    break;
+
+  case 30: /* expression: unary  */
+#line 65 "miniC.y"
+                                                                                                    {(yyval.nptr) = (yyvsp[0].nptr);}
+#line 1445 "y.tab.c"
+    break;
+
+  case 31: /* assign: STR '=' expression  */
+#line 67 "miniC.y"
+                            {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createAsgn(tnptr, (yyvsp[0].nptr));}
+#line 1451 "y.tab.c"
+    break;
+
+  case 32: /* assign: STR '=' NUM ';'  */
+#line 68 "miniC.y"
+                                   {astNode* tnptr = createVar((yyvsp[-3].sname)); astNode* tnptr2 = createCnst((yyvsp[-1].ival)); (yyval.nptr) = createAsgn(tnptr, tnptr2);}
+#line 1457 "y.tab.c"
+    break;
+
+  case 33: /* assign: STR '=' STR ';'  */
+#line 69 "miniC.y"
+                                   {astNode* tnptr = createVar((yyvsp[-3].sname)); astNode* tnptr2 = createVar((yyvsp[-1].sname)); (yyval.nptr) = createAsgn(tnptr, tnptr2);}
+#line 1463 "y.tab.c"
+    break;
+
+  case 34: /* assign: STR '=' func_call  */
+#line 70 "miniC.y"
+                                    {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createAsgn(tnptr, (yyvsp[0].nptr));}
+#line 1469 "y.tab.c"
+    break;
+
+  case 35: /* func_call: PRINT '(' STR ')' ';'  */
+#line 72 "miniC.y"
+                                   {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createCall((yyvsp[-4].sname), tnptr);}
+#line 1475 "y.tab.c"
+    break;
+
+  case 36: /* func_call: PRINT '(' NUM ')' ';'  */
+#line 73 "miniC.y"
+                                                {astNode* tnptr = createCnst((yyvsp[-2].ival)); (yyval.nptr) = createCall((yyvsp[-4].sname), tnptr);}
+#line 1481 "y.tab.c"
+    break;
+
+  case 37: /* func_call: READ '(' ')' ';'  */
+#line 74 "miniC.y"
+                                          {(yyval.nptr) = createCall((yyvsp[-3].sname));}
+#line 1487 "y.tab.c"
+    break;
+
+  case 38: /* if_block: IF '(' comparison ')' stmt  */
+#line 76 "miniC.y"
+                                      {(yyval.nptr) = createIf((yyvsp[-2].nptr), (yyvsp[0].nptr));}
+#line 1493 "y.tab.c"
+    break;
+
+  case 39: /* if_block: IF '(' comparison ')' stmt else_block  */
+#line 76 "miniC.y"
+                                                                                                       {(yyval.nptr) = createIf((yyvsp[-3].nptr), (yyvsp[-1].nptr), (yyvsp[0].nptr));}
+#line 1499 "y.tab.c"
+    break;
+
+  case 40: /* while_block: WHILE '(' comparison ')' stmt  */
+#line 78 "miniC.y"
+                                            {(yyval.nptr) = createWhile((yyvsp[-2].nptr), (yyvsp[0].nptr));}
+#line 1505 "y.tab.c"
+    break;
+
+  case 41: /* else_block: ELSE stmt  */
 #line 80 "miniC.y"
+                       {(yyval.nptr) = (yyvsp[0].nptr);}
+#line 1511 "y.tab.c"
+    break;
+
+  case 42: /* stmt: func_call  */
+#line 82 "miniC.y"
+                 {(yyval.nptr) = (yyvsp[0].nptr);}
+#line 1517 "y.tab.c"
+    break;
+
+  case 43: /* stmt: return_statement  */
+#line 82 "miniC.y"
                                                {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1506 "y.tab.c"
+#line 1523 "y.tab.c"
     break;
 
-  case 42: /* stmt: assign  */
-#line 80 "miniC.y"
+  case 44: /* stmt: assign  */
+#line 82 "miniC.y"
                                                                    {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1512 "y.tab.c"
+#line 1529 "y.tab.c"
     break;
 
-  case 43: /* stmt: declaration  */
-#line 80 "miniC.y"
+  case 45: /* stmt: declaration  */
+#line 82 "miniC.y"
                                                                                              {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1518 "y.tab.c"
+#line 1535 "y.tab.c"
     break;
 
-  case 44: /* stmt: if_block  */
-#line 80 "miniC.y"
+  case 46: /* stmt: if_block  */
+#line 82 "miniC.y"
                                                                                                                    {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1524 "y.tab.c"
+#line 1541 "y.tab.c"
     break;
 
-  case 45: /* stmt: while_block  */
-#line 80 "miniC.y"
+  case 47: /* stmt: while_block  */
+#line 82 "miniC.y"
                                                                                                                                              {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1530 "y.tab.c"
+#line 1547 "y.tab.c"
     break;
 
-  case 46: /* stmt: comnd_block  */
-#line 80 "miniC.y"
+  case 48: /* stmt: comnd_block  */
+#line 82 "miniC.y"
                                                                                                                                                                       {(yyval.nptr) = (yyvsp[0].nptr);}
-#line 1536 "y.tab.c"
+#line 1553 "y.tab.c"
     break;
 
-  case 47: /* stmts: stmts stmt  */
-#line 82 "miniC.y"
-                   {(yyval.svec_ptr) = (yyvsp[-1].svec_ptr); (yyval.svec_ptr)->push_back((yyvsp[0].nptr));}
-#line 1542 "y.tab.c"
-    break;
-
-  case 48: /* stmts: stmt  */
-#line 82 "miniC.y"
-                                                        {(yyval.svec_ptr) = new vector<astNode*>(); (yyval.svec_ptr)->push_back((yyvsp[0].nptr));}
-#line 1548 "y.tab.c"
-    break;
-
-  case 49: /* comnd_block: '{' stmts '}'  */
+  case 49: /* stmts: stmts stmt  */
 #line 84 "miniC.y"
+                   {(yyval.svec_ptr) = (yyvsp[-1].svec_ptr); (yyval.svec_ptr)->push_back((yyvsp[0].nptr));}
+#line 1559 "y.tab.c"
+    break;
+
+  case 50: /* stmts: stmt  */
+#line 84 "miniC.y"
+                                                        {(yyval.svec_ptr) = new vector<astNode*>(); (yyval.svec_ptr)->push_back((yyvsp[0].nptr));}
+#line 1565 "y.tab.c"
+    break;
+
+  case 51: /* comnd_block: '{' stmts '}'  */
+#line 86 "miniC.y"
                             {(yyval.nptr) = createBlock((yyvsp[-1].svec_ptr));}
-#line 1554 "y.tab.c"
+#line 1571 "y.tab.c"
     break;
 
-  case 50: /* func_def: INT STR '(' INT STR ')' comnd_block  */
-#line 86 "miniC.y"
-                                                {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createFunc((yyvsp[-5].sname), tnptr , (yyvsp[0].nptr));}
-#line 1560 "y.tab.c"
-    break;
-
-  case 51: /* func_def: INT STR '(' ')' comnd_block  */
-#line 86 "miniC.y"
-                                                                                                                                                 {(yyval.nptr) = createFunc((yyvsp[-3].sname), NULL, (yyvsp[0].nptr));}
-#line 1566 "y.tab.c"
-    break;
-
-  case 52: /* program: definition1 definition2 func_def  */
+  case 52: /* func_def: INT STR '(' INT STR ')' comnd_block  */
 #line 88 "miniC.y"
+                                                {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createFunc((yyvsp[-5].sname), tnptr , (yyvsp[0].nptr));}
+#line 1577 "y.tab.c"
+    break;
+
+  case 53: /* func_def: INT STR '(' ')' comnd_block  */
+#line 88 "miniC.y"
+                                                                                                                                                 {(yyval.nptr) = createFunc((yyvsp[-3].sname), NULL, (yyvsp[0].nptr));}
+#line 1583 "y.tab.c"
+    break;
+
+  case 54: /* program: definition1 definition2 func_def  */
+#line 90 "miniC.y"
                                            {(yyval.nptr) = createProg((yyvsp[-2].nptr), (yyvsp[-1].nptr), (yyvsp[0].nptr)); root = (yyval.nptr);}
-#line 1572 "y.tab.c"
+#line 1589 "y.tab.c"
     break;
 
 
-#line 1576 "y.tab.c"
+#line 1593 "y.tab.c"
 
       default: break;
     }
@@ -1765,7 +1782,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 89 "miniC.y"
+#line 91 "miniC.y"
 
 
 bool check(vector<vector<char*>*> stackOfVectors, char* searchString) {
@@ -1801,7 +1818,6 @@ void helper(vector<astNode*> nodes, vector<vector<char*>*> temp){
 				helper(newnodes, temp);				
 			}
 			else if (currnode->stmt.type == ast_ret){
-				printf("in return\n");
 				vector<astNode*> newnodes;
 				newnodes.push_back(currnode->stmt.ret.expr);
 				helper(newnodes, temp);				

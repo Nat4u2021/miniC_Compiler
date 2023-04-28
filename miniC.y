@@ -23,7 +23,7 @@ astNode *root;
 %token INT EXTERN IF WHILE ELSE RETURN VOID
 %token <ival> NUM 
 %token <sname> STR READ PRINT
-%type <nptr> expression program declaration definition1 definition2 func_def if_block while_block else_block return_statement eq_cond lt_cond gt_cond gteq_cond lteq_cond neq_cond func_call comparison assign stmt comnd_block add subtract multiply divide term
+%type <nptr> expression program declaration definition1 definition2 func_def if_block while_block else_block return_statement eq_cond lt_cond gt_cond gteq_cond lteq_cond neq_cond func_call comparison assign stmt comnd_block add subtract multiply divide unary term
 %type <svec_ptr> stmts 
 %start program
 
@@ -60,7 +60,9 @@ multiply : term '*' term ';'  {$$ = createBExpr($1, $3, mul);}
 
 divide : term '/' term ';'    {$$ = createBExpr($1, $3, divide);}
 
-expression : add {$$ = $1;}| subtract {$$ = $1;} | multiply {$$ = $1;}  | divide {$$ = $1;}
+unary: '-' term ';'  {$$ = createUExpr($2, sub);}
+
+expression : add {$$ = $1;}| subtract {$$ = $1;} | multiply {$$ = $1;}  | divide {$$ = $1;} | unary {$$ = $1;} 
 
 assign : STR '=' expression {astNode* tnptr = createVar($1); $$ = createAsgn(tnptr, $3);}
 		| STR '=' NUM ';'  {astNode* tnptr = createVar($1); astNode* tnptr2 = createCnst($3); $$ = createAsgn(tnptr, tnptr2);}
@@ -121,7 +123,6 @@ void helper(vector<astNode*> nodes, vector<vector<char*>*> temp){
 				helper(newnodes, temp);				
 			}
 			else if (currnode->stmt.type == ast_ret){
-				printf("in return\n");
 				vector<astNode*> newnodes;
 				newnodes.push_back(currnode->stmt.ret.expr);
 				helper(newnodes, temp);				
