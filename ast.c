@@ -267,7 +267,8 @@ void freeBlock(astNode *node){
 		freeNode(*it);
 		it++;	
 	}
-
+	
+	delete(node->stmt.block.stmt_list);
 	free(node);
 	return;
 }
@@ -518,8 +519,10 @@ void printStmt(astStmt *stmt, int n){
 	switch(stmt->type){
 		case ast_call: { 
 							printf("%sCall: name %s\n", indent, stmt->call.name);
-							printf("%sCall: param\n", indent);
-							printNode(stmt->call.param, n+1);
+							if (stmt->call.param != NULL){
+								printf("%sCall: param\n", indent);
+								printNode(stmt->call.param, n+1);
+							}
 							break;
 						}
 		case ast_ret: {

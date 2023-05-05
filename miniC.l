@@ -12,23 +12,23 @@ num     [0-9]
 alphanum_us 	[a-zA-Z0-9_]
 
 %%
-"int"		{yylval.sname = strdup(yytext); printf("%s", yytext); 
+"int"		{yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return INT;}
-"extern"	{yylval.sname = strdup(yytext); printf("%s", yytext); 
+"extern"	{yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return EXTERN;}
-"while"	 {yylval.sname = strdup(yytext); printf("%s", yytext); 
+"while"	 {yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return WHILE;}
-"if"	 {yylval.sname = strdup(yytext); printf("%s", yytext); 
+"if"	 {yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return IF;}
-"else"	 {yylval.sname = strdup(yytext); printf("%s", yytext); 
+"else"	 {yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return ELSE;}
-"return" {yylval.sname = strdup(yytext); printf("%s", yytext); 
+"return" {yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return RETURN;}
 "read" {yylval.sname = strdup(yytext); printf("%s", yytext); 
 				 return READ;}
 "print" {yylval.sname = strdup(yytext); printf("%s", yytext); 
 				 return PRINT;}
-"void" {yylval.sname = strdup(yytext); printf("%s", yytext); 
+"void" {yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return VOID;}
 
 {letter}{alphanum_us}* {yylval.sname = strdup(yytext); printf("%s", yytext); 

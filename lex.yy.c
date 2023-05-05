@@ -801,37 +801,37 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 15 "miniC.l"
-{yylval.sname = strdup(yytext); printf("%s", yytext); 
+{yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return INT;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 17 "miniC.l"
-{yylval.sname = strdup(yytext); printf("%s", yytext); 
+{yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return EXTERN;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 19 "miniC.l"
-{yylval.sname = strdup(yytext); printf("%s", yytext); 
+{yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return WHILE;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 21 "miniC.l"
-{yylval.sname = strdup(yytext); printf("%s", yytext); 
+{yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return IF;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 23 "miniC.l"
-{yylval.sname = strdup(yytext); printf("%s", yytext); 
+{yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return ELSE;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 25 "miniC.l"
-{yylval.sname = strdup(yytext); printf("%s", yytext); 
+{yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return RETURN;}
 	YY_BREAK
 case 7:
@@ -849,7 +849,7 @@ YY_RULE_SETUP
 case 9:
 YY_RULE_SETUP
 #line 31 "miniC.l"
-{yylval.sname = strdup(yytext); printf("%s", yytext); 
+{yylval.sname = strdup(yytext); printf("%s", yytext); free(yylval.sname);
 				 return VOID;}
 	YY_BREAK
 case 10:

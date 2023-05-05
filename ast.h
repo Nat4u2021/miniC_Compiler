@@ -1,7 +1,7 @@
 #ifndef AST_H
 #define AST_H 
 
-#include<cstddef>
+#include <cstddef>
 #include<vector>
 using namespace std;
 
@@ -88,7 +88,7 @@ typedef struct {
 typedef struct {
 	  astNode* lhs;
 	  astNode* rhs;
-      op_type op;
+    op_type op;
 	} astBExpr;
 
 typedef struct {
@@ -154,14 +154,14 @@ struct ast_Node{
 		  astConst  cnst;
 		  astRExpr  rexpr;
 		  astBExpr  bexpr;
-          astUExpr  uexpr;
+      astUExpr  uexpr;
 		};
 	};
 
 
 /* 
-Declarations of create* functions for all the types of nodes defined above. All the create*
-functions return a astNode*. 
+Declarations of create* functions for all the types of nodes 
+defined above. All the create* functions return a astNode*. 
 */
 
 astNode* createProg(astNode* extern1, astNode* extern2, astNode* func);
@@ -174,8 +174,9 @@ astNode* createBExpr(astNode* lhs, astNode* rhs, op_type op);
 astNode* createUExpr(astNode* expr, op_type op);
 
 /*
-Instead of one create for astNode of type ast_stmt, a seprarate create function
-is given for each statement type. Like all other create functions these functions return
+Instead of one create for astNode of type ast_stmt, a separate 
+create function is given for each statement type. Like all 
+other create functions these functions return
 a astNode*.
 */
 

@@ -1272,19 +1272,19 @@ yyreduce:
     {
   case 2: /* declaration: INT STR ';'  */
 #line 31 "miniC.y"
-                          {(yyval.nptr) = createDecl((yyvsp[-1].sname));}
+                          {(yyval.nptr) = createDecl((yyvsp[-1].sname)); free((yyvsp[-1].sname));}
 #line 1277 "y.tab.c"
     break;
 
   case 3: /* definition1: EXTERN VOID PRINT '(' INT ')' ';'  */
 #line 33 "miniC.y"
-                                                {(yyval.nptr) = createExtern((yyvsp[-4].sname)); freeExtern((yyval.nptr));}
+                                                {(yyval.nptr) = createExtern((yyvsp[-4].sname)); free((yyvsp[-4].sname));}
 #line 1283 "y.tab.c"
     break;
 
   case 4: /* definition2: EXTERN INT READ '(' ')' ';'  */
 #line 35 "miniC.y"
-                                          {(yyval.nptr) = createExtern((yyvsp[-3].sname)); freeExtern((yyval.nptr));}
+                                          {(yyval.nptr) = createExtern((yyvsp[-3].sname)); free((yyvsp[-3].sname));}
 #line 1289 "y.tab.c"
     break;
 
@@ -1308,7 +1308,7 @@ yyreduce:
 
   case 8: /* term: STR  */
 #line 39 "miniC.y"
-                                        {(yyval.nptr) = createVar((yyvsp[0].sname));}
+                                        {(yyval.nptr) = createVar((yyvsp[0].sname)); free((yyvsp[0].sname));}
 #line 1313 "y.tab.c"
     break;
 
@@ -1446,43 +1446,43 @@ yyreduce:
 
   case 31: /* assign: STR '=' expression  */
 #line 67 "miniC.y"
-                            {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createAsgn(tnptr, (yyvsp[0].nptr));}
+                            {astNode* tnptr = createVar((yyvsp[-2].sname)); free((yyvsp[-2].sname)); (yyval.nptr) = createAsgn(tnptr, (yyvsp[0].nptr));}
 #line 1451 "y.tab.c"
     break;
 
   case 32: /* assign: STR '=' NUM ';'  */
 #line 68 "miniC.y"
-                                   {astNode* tnptr = createVar((yyvsp[-3].sname)); astNode* tnptr2 = createCnst((yyvsp[-1].ival)); (yyval.nptr) = createAsgn(tnptr, tnptr2);}
+                                   {astNode* tnptr = createVar((yyvsp[-3].sname)); free((yyvsp[-3].sname)); astNode* tnptr2 = createCnst((yyvsp[-1].ival)); (yyval.nptr) = createAsgn(tnptr, tnptr2);}
 #line 1457 "y.tab.c"
     break;
 
   case 33: /* assign: STR '=' STR ';'  */
 #line 69 "miniC.y"
-                                   {astNode* tnptr = createVar((yyvsp[-3].sname)); astNode* tnptr2 = createVar((yyvsp[-1].sname)); (yyval.nptr) = createAsgn(tnptr, tnptr2);}
+                                   {astNode* tnptr = createVar((yyvsp[-3].sname)); free((yyvsp[-3].sname)); astNode* tnptr2 = createVar((yyvsp[-1].sname)); free((yyvsp[-1].sname)); (yyval.nptr) = createAsgn(tnptr, tnptr2);}
 #line 1463 "y.tab.c"
     break;
 
   case 34: /* assign: STR '=' func_call  */
 #line 70 "miniC.y"
-                                    {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createAsgn(tnptr, (yyvsp[0].nptr));}
+                                    {astNode* tnptr = createVar((yyvsp[-2].sname)); free((yyvsp[-2].sname)); (yyval.nptr) = createAsgn(tnptr, (yyvsp[0].nptr));}
 #line 1469 "y.tab.c"
     break;
 
   case 35: /* func_call: PRINT '(' STR ')' ';'  */
 #line 72 "miniC.y"
-                                   {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createCall((yyvsp[-4].sname), tnptr);}
+                                   {astNode* tnptr = createVar((yyvsp[-2].sname)); free((yyvsp[-2].sname)); (yyval.nptr) = createCall((yyvsp[-4].sname), tnptr); free((yyvsp[-4].sname));}
 #line 1475 "y.tab.c"
     break;
 
   case 36: /* func_call: PRINT '(' NUM ')' ';'  */
 #line 73 "miniC.y"
-                                                {astNode* tnptr = createCnst((yyvsp[-2].ival)); (yyval.nptr) = createCall((yyvsp[-4].sname), tnptr);}
+                                                {astNode* tnptr = createCnst((yyvsp[-2].ival)); (yyval.nptr) = createCall((yyvsp[-4].sname), tnptr); free((yyvsp[-4].sname));}
 #line 1481 "y.tab.c"
     break;
 
   case 37: /* func_call: READ '(' ')' ';'  */
 #line 74 "miniC.y"
-                                          {(yyval.nptr) = createCall((yyvsp[-3].sname));}
+                                          {(yyval.nptr) = createCall((yyvsp[-3].sname)); free((yyvsp[-3].sname));}
 #line 1487 "y.tab.c"
     break;
 
@@ -1572,13 +1572,13 @@ yyreduce:
 
   case 52: /* func_def: INT STR '(' INT STR ')' comnd_block  */
 #line 88 "miniC.y"
-                                                {astNode* tnptr = createVar((yyvsp[-2].sname)); (yyval.nptr) = createFunc((yyvsp[-5].sname), tnptr , (yyvsp[0].nptr));}
+                                                {astNode* tnptr = createVar((yyvsp[-2].sname)); free((yyvsp[-2].sname)); (yyval.nptr) = createFunc((yyvsp[-5].sname), tnptr , (yyvsp[0].nptr)); free((yyvsp[-5].sname));}
 #line 1577 "y.tab.c"
     break;
 
   case 53: /* func_def: INT STR '(' ')' comnd_block  */
 #line 88 "miniC.y"
-                                                                                                                                                 {(yyval.nptr) = createFunc((yyvsp[-3].sname), NULL, (yyvsp[0].nptr));}
+                                                                                                                                                                     {(yyval.nptr) = createFunc((yyvsp[-3].sname), NULL, (yyvsp[0].nptr)); free((yyvsp[-3].sname));}
 #line 1583 "y.tab.c"
     break;
 
@@ -1798,48 +1798,55 @@ bool check(vector<vector<char*>*> stackOfVectors, char* searchString) {
 
 void helper(vector<astNode*> nodes, vector<vector<char*>*> temp){
 	while (!nodes.empty()){
-		vector<char*> *currvector = new vector<char*>();
 		astNode* currnode = nodes.front();
 		nodes.erase(nodes.begin());
 	
 		if (currnode->type == ast_stmt){
 			if (currnode->stmt.type == ast_block){
+				vector<char*> *currvector = new vector<char*>();
 				temp.push_back(currvector);
 				helper(*currnode->stmt.block.stmt_list, temp);
 				temp.pop_back();
+				delete(currvector);
 			}
 			else if (currnode->stmt.type == ast_decl){
+				vector<char*> *currvector;
 				currvector = temp.back();
 				currvector->push_back(currnode->stmt.decl.name);
 			}
 			else if (currnode->stmt.type == ast_call){
 				vector<astNode*> newnodes;
 				newnodes.push_back(currnode->stmt.call.param);
-				helper(newnodes, temp);				
+				helper(newnodes, temp);	
+						
 			}
 			else if (currnode->stmt.type == ast_ret){
 				vector<astNode*> newnodes;
 				newnodes.push_back(currnode->stmt.ret.expr);
-				helper(newnodes, temp);				
+				helper(newnodes, temp);	
+						
 			}
 			else if (currnode->stmt.type == ast_while){
 				vector<astNode*> newnodes;
 				newnodes.push_back(currnode->stmt.whilen.cond);
 				newnodes.push_back(currnode->stmt.whilen.body);
-				helper(newnodes, temp);				
+				helper(newnodes, temp);		
+					
 			}
 			else if (currnode->stmt.type == ast_if){
 				vector<astNode*> newnodes;
 				newnodes.push_back(currnode->stmt.ifn.cond);
 				newnodes.push_back(currnode->stmt.ifn.if_body);
 				if (currnode->stmt.ifn.else_body != NULL) newnodes.push_back(currnode->stmt.ifn.else_body);
-				helper(newnodes, temp);				
+				helper(newnodes, temp);	
+							
 			}
 			else if (currnode->stmt.type == ast_asgn){
 				vector<astNode*> newnodes;
 				newnodes.push_back(currnode->stmt.asgn.lhs);
 				newnodes.push_back(currnode->stmt.asgn.rhs);
-				helper(newnodes, temp);				
+				helper(newnodes, temp);		
+					
 			}						
 		}
 		else if (currnode->type == ast_var){
@@ -1853,19 +1860,23 @@ void helper(vector<astNode*> nodes, vector<vector<char*>*> temp){
 			newnodes.push_back(currnode->rexpr.lhs);
 			newnodes.push_back(currnode->rexpr.rhs);
 			helper(newnodes, temp);
+			
 		}
 		else if (currnode->type == ast_bexpr){
 			vector<astNode*> newnodes;
 			newnodes.push_back(currnode->bexpr.lhs);
 			newnodes.push_back(currnode->bexpr.rhs);
 			helper(newnodes, temp);
+			
 		}
 		else if (currnode->type == ast_uexpr){
 			vector<astNode*> newnodes;
 			newnodes.push_back(currnode->uexpr.expr);
 			helper(newnodes, temp);
-		}		
+			
+		}
 	}
+
 	return;
 }
 
@@ -1885,6 +1896,9 @@ void semantic_analysis(astNode *root){
 	helper(nodes, symbol_table_stack);
 
 	symbol_table_stack.pop_back();
+	delete(currvector); 
+
+
 }
 
 
@@ -1895,7 +1909,10 @@ int main(int argc, char** argv){
 
 	yyparse();
 
+
 	semantic_analysis(root->prog.func);
+
+	freeProg(root);
 
 	if (yyin != stdin)
 		fclose(yyin);
