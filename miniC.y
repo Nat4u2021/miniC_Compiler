@@ -201,10 +201,17 @@ void semantic_analysis(astNode *root){
 
 	symbol_table_stack.pop_back();
 	delete(currvector); 
+}
 
+void optimizer_subexp_eli(char* filename){
+
+	LLVMModuleRef module = createLLVMModel(filename);
 
 }
 
+void walkBBInstructions_subexp_eli(LLVMBasicBlockRef bb){
+	
+}
 
 int main(int argc, char** argv){
 	if (argc == 2){
