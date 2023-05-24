@@ -1,14 +1,12 @@
-int main(){
- 	int a;
-	int b;
-	int c;
-	int d;
+extern int read();
+extern void print(int);
 
-	a = 10;
-	b = 20;
-	c = a + b;
-	d = c + c;
+int func(int i, int j) {
+ 	int a, b;
 
+	a = i + j;
+	b = i * j;
 
-	return 0;
+	return (a+b);
+
 }
