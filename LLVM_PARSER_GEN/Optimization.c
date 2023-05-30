@@ -37,53 +37,40 @@ LLVMModuleRef createLLVMModel(char * filename){
 }
 
 // Helper function to compare two instructions
-bool compareInstructions(LLVMValueRef a, LLVMValueRef b, unordered_map<LLVMValueRef, int> instructions, unordered_map<int, LLVMValueRef> stores) {
+bool compareInstructions(LLVMValueRef a, LLVMValueRef b, LLVMBasicBlockRef bb) {
 
     // Check that the instructions have the same opcode
     if (LLVMGetInstructionOpcode(a) != LLVMGetInstructionOpcode(b)) return false;
-    
 
     // Check that the instructions have the same number of operands
     if (LLVMGetNumOperands(a) != LLVMGetNumOperands(b)) {
         return false;
     }
 
-    // Check that all the operands of A are present in B (regardless of position)
-    unordered_map<LLVMValueRef, bool> operandMap;
-    for (unsigned i = 0; i < LLVMGetNumOperands(b); ++i) {
-        LLVMValueRef operand = LLVMGetOperand(b, i);
-        operandMap[operand] = true;
-    }
+    // Check that all the operands of A are present in B (with the position in mind)
     for (unsigned i = 0; i < LLVMGetNumOperands(a); ++i) {
-        LLVMValueRef operand = LLVMGetOperand(a, i);
-        if (!operandMap[operand]) {
-            return false;
-        }
-    }
+        if ( LLVMGetOperand(a, i) != LLVMGetOperand(b, i) ){
+			return false;
+		}
+	}
+	
 
-	if (LLVMGetInstructionOpcode(a) == LLVMLoad){
-		int pos1 = instructions.at(b);
-
-		for (auto i = stores.begin(); i != stores.end(); ++i){
-			int j = i->first; 
-			LLVMValueRef store = stores.at(j);
-			if ((pos1 < j) && (operandMap[LLVMGetOperand(store, 1)])){
-				return false;
+	//if instructions are both loads, check if there is a store to the load address between them
+	if (LLVMGetInstructionOpcode(b) == LLVMLoad){
+		for (LLVMValueRef ins = a; ins != b; ins = LLVMGetNextInstruction(ins)){
+			if (LLVMGetInstructionOpcode(ins) == LLVMStore){
+				if ( LLVMGetOperand(ins, 1) == LLVMGetOperand(b, 0) ){
+					return false;
+				}
 			}
 		}
 	}
+
     return true;
 }
 
 bool hasNoUses(LLVMValueRef instruction) {
-
-    for (LLVMUseRef user = LLVMGetFirstUse(instruction); user != NULL; user = LLVMGetNextUse(user)) {
-        LLVMValueRef userValue = LLVMGetUser(user);
-        if (LLVMIsAInstruction(userValue)) {
-            return false; // Found an instruction user
-        }
-    }
-    return true; // No instruction users found
+    return LLVMGetFirstUse(instruction) == NULL; // No instruction users found
 }
 
 // Common subexpression function
@@ -95,27 +82,28 @@ bool walkBBInstructions_subexp_elimi(LLVMBasicBlockRef bb) {
 
 	bool executed = false;
 
-    for (LLVMValueRef instruction = LLVMGetFirstInstruction(bb); instruction;
-            instruction = LLVMGetNextInstruction(instruction)) {
-		if (LLVMGetInstructionOpcode(instruction) == LLVMAlloca) continue;
-        // Check if the instruction matches a previous one
-        for (auto it = myMap.begin(); it != myMap.end(); ++it) {
-            if (compareInstructions(instruction, it->first, myMap, stores)) {
-                LLVMReplaceAllUsesWith(instruction, it->first);
-                lastInstruction = instruction;
-				executed = true;
-                break;
-            }
-        }
-		i = i + 1;
-        if (lastInstruction != instruction) {
-            myMap[instruction] = i;
-			if (LLVMGetInstructionOpcode(instruction) == LLVMStore) stores[i] = instruction;
-            lastInstruction = instruction;
-        }
-    }
+    for (LLVMValueRef instruction = LLVMGetFirstInstruction(bb); instruction; instruction = LLVMGetNextInstruction(instruction)) {
+		LLVMOpcode op = LLVMGetInstructionOpcode(instruction);
+		if ( (op == LLVMICmp)  || (op == LLVMAdd) || (op == LLVMSub) || (op == LLVMMul) ||  (op == LLVMLoad) ){
+			vector<LLVMValueRef> to_replace;
+
+			for (LLVMValueRef inner = LLVMGetFirstInstruction(bb); instruction != inner; inner = LLVMGetNextInstruction(inner)){
+				if (compareInstructions(inner, instruction, bb)){
+					to_replace.push_back(inner);
+					executed = true;
+				}
+
+			}
+			for (LLVMValueRef element: to_replace){
+				LLVMReplaceAllUsesWith(element, instruction);
+			}
+		}
+	}
+
 	return executed;
 }
+
+//constant folding optimization
 
 bool walkBBInstructions_constant_folding(LLVMBasicBlockRef bb) {
 	bool executed = false;
@@ -128,14 +116,14 @@ bool walkBBInstructions_constant_folding(LLVMBasicBlockRef bb) {
 		LLVMValueRef operand2 = LLVMGetOperand(instruction, 1);
 
 		
-		if ( (op == LLVMICmp)  || (op >= LLVMAdd && op <= LLVMFMul) ){
+		if ( (op == LLVMICmp)  || (op == LLVMAdd) || (op == LLVMSub) || (op == LLVMMul) ){
 			if (LLVMIsConstant(operand1) && LLVMIsConstant(operand2)){
 				LLVMValueRef result;
 				if (op == LLVMAdd) result = LLVMConstAdd(operand1, operand2);
 				else if (op == LLVMSub) result = LLVMConstSub(operand1, operand2);
 				else if (op == LLVMMul) result = LLVMConstMul(operand1, operand2);
 				else if (op == LLVMICmp) result = LLVMConstICmp(LLVMGetICmpPredicate(instruction), operand1, operand2);
-				LLVMReplaceAllUsesWith(instruction, result);
+				LLVMReplaceAllUsesWith(instruction, result);			
 				executed = true;
 			}
 		}
@@ -143,28 +131,26 @@ bool walkBBInstructions_constant_folding(LLVMBasicBlockRef bb) {
 	return executed;
 }
 
+
 bool walkBBInstructions_deadcode_elimiation(LLVMBasicBlockRef bb) {
 	bool executed = false;
+
+	vector<LLVMValueRef> to_erase;
 
 	//looping through instructions in block
     for (LLVMValueRef instruction = LLVMGetFirstInstruction(bb); instruction; instruction = LLVMGetNextInstruction(instruction)) {
 		LLVMOpcode op = LLVMGetInstructionOpcode(instruction);
 		if (op == LLVMStore || op == LLVMAlloca || op == LLVMCall || LLVMIsATerminatorInst(instruction)) continue;
 		if (hasNoUses(instruction)){
-			LLVMInstructionEraseFromParent(instruction);
+			to_erase.push_back(instruction);
 			executed = true;
 		}
     }
+
+	for (LLVMValueRef element: to_erase){
+		LLVMInstructionEraseFromParent(element);
+	}
 	return executed;
-}
-
-void walkBBInstructions(LLVMBasicBlockRef bb){
-	for (LLVMValueRef instruction = LLVMGetFirstInstruction(bb); instruction; instruction = LLVMGetNextInstruction(instruction)) {
-		// LLVMGetInstructionOpcode gives you LLVMOpcode that is a enum		
-		LLVMOpcode op = LLVMGetInstructionOpcode(instruction);
-		LLVMDumpValue(instruction);	
-	}			
-
 }
 
 unordered_set<LLVMValueRef> generate(LLVMBasicBlockRef bb) {
@@ -224,8 +210,9 @@ unordered_map<LLVMBasicBlockRef, vector<LLVMBasicBlockRef>> predecessors(LLVMVal
 }
 
 
-bool areConstantStoresWithSameValue(unordered_set<LLVMValueRef> storeInstructions) {
-    LLVMValueRef constantValue = nullptr;
+bool areConstantStoresWithSameValue(vector<LLVMValueRef> storeInstructions) {
+
+    LLVMValueRef constantValue = NULL;
     bool isFirstStore = true;
 
     // Iterate over the store instructions
@@ -233,16 +220,15 @@ bool areConstantStoresWithSameValue(unordered_set<LLVMValueRef> storeInstruction
         LLVMValueRef storeValue = LLVMGetOperand(storeInstruction, 0);
 
         // Check if the store value is a constant
-        if (LLVMIsConstant(storeValue)) {
-            LLVMValueRef constant = LLVMGetOperand(storeValue, 0);
+        if (LLVMIsAConstantInt(storeValue)) {
 
             // If it's the first store, set the constant value
             if (isFirstStore) {
-                constantValue = constant;
+                constantValue = storeValue;
                 isFirstStore = false;
             }
             // If the constant value is different, return false
-            else if (constant != constantValue) {
+            else if (LLVMConstIntGetSExtValue(storeValue) != LLVMConstIntGetSExtValue(constantValue)) {
                 return false;
             }
         }
@@ -263,15 +249,7 @@ void print(unordered_set<LLVMValueRef> stores){
 	}	
 }
 
-void print_v(vector<LLVMBasicBlockRef> vector){
-	for (LLVMBasicBlockRef s: vector){
-		walkBBInstructions(s);
-		printf("   |   ");
-	}	
-}
-
-bool ConstantPropagation(LLVMValueRef function){
-
+bool ConstantPropagation(LLVMValueRef function) {
 
 	unordered_set<LLVMValueRef> stores;
 	for (LLVMBasicBlockRef basicBlock = LLVMGetFirstBasicBlock(function); basicBlock; basicBlock = LLVMGetNextBasicBlock(basicBlock)) {
@@ -283,7 +261,6 @@ bool ConstantPropagation(LLVMValueRef function){
 		}
 	}	
 
-	
 	unordered_map<LLVMBasicBlockRef, unordered_set<LLVMValueRef>> in;
 	unordered_map<LLVMBasicBlockRef, unordered_set<LLVMValueRef>> out;
 	unordered_map<LLVMBasicBlockRef, vector<LLVMBasicBlockRef>> pred = predecessors(function);
@@ -304,7 +281,6 @@ bool ConstantPropagation(LLVMValueRef function){
 
 			if (pred.find(basicBlock) != pred.end()) {
     			vector_pred = pred.at(basicBlock);
-				//print_v(vector_pred);
 			}
 
 			unordered_set<LLVMValueRef> in_set;
@@ -344,76 +320,69 @@ bool ConstantPropagation(LLVMValueRef function){
 	}
 
 	unordered_set<LLVMValueRef> R;
-	unordered_set<LLVMValueRef> deleted;
+	vector<LLVMValueRef> deleted;
 	for (LLVMBasicBlockRef basicBlock = LLVMGetFirstBasicBlock(function); basicBlock; basicBlock = LLVMGetNextBasicBlock(basicBlock)) {
 		R  = in.at(basicBlock);
-		unordered_set<LLVMValueRef> kill_set = kill(basicBlock, stores);
+
 		for (LLVMValueRef instruction = LLVMGetFirstInstruction(basicBlock); instruction; instruction = LLVMGetNextInstruction(instruction)) {
 			if (LLVMGetInstructionOpcode(instruction) == LLVMStore){
-				R.insert(instruction);
-				for (LLVMValueRef ell : kill_set){
-					R.erase(ell);
-				}
+				LLVMValueRef addr = LLVMGetOperand(instruction, 1);
 
-				// unordered_set<LLVMValueRef> new_R;
-				// for (const auto& element : R){
-				// 	if ((LLVMGetOperand(instruction, 1) != LLVMGetOperand(element, 1))){
-				//  		new_R.insert(element);
-				// 	}
-				// }
-				// R = new_R;
-			}
-			if (LLVMGetInstructionOpcode(instruction) == LLVMLoad) {
-
-				for (const auto& element : R) {
-					LLVMValueRef loadoperand = LLVMGetOperand(instruction, 0);
-					
-					if ( loadoperand == LLVMGetOperand(element, 1) ) {
-
-						printf("here");
-						if (LLVMIsConstant(LLVMGetOperand(element, 0))){
-							LLVMReplaceAllUsesWith(instruction, LLVMGetOperand(element, 0));
-							deleted.insert(instruction);
-						}
+				vector<LLVMValueRef> to_erase;
+				for (const auto& element : R){
+					if (addr == LLVMGetOperand(element, 1)){
+				 		to_erase.push_back(element);
 					}
 				}
 
-				// if (areConstantStoresWithSameValue(new_stores)){
-				// 	LLVMReplaceAllUsesWith(instruction, LLVMGetOperand(temp_instruction, 0));
-				// 	deleted.insert(instruction);
-				// }
+				for (LLVMValueRef element : to_erase){
+					R.erase(element);
+				}
+
+				R.insert(instruction);
+			}
+			else if (LLVMGetInstructionOpcode(instruction) == LLVMLoad) {
+				LLVMValueRef loadaddr = LLVMGetOperand(instruction, 0);
+				vector<LLVMValueRef> new_stores; 
+
+
+				for (const auto& element : R) {
+					if (loadaddr == LLVMGetOperand(element, 1)) {
+						new_stores.push_back(element);
+					}
+				}
+
+				if (areConstantStoresWithSameValue(new_stores)){
+					LLVMReplaceAllUsesWith(instruction, LLVMGetOperand(new_stores[0], 0));
+					deleted.push_back(instruction);
+				}
 			}
 		}
 	}
 
-	for (const auto& element : deleted){
+	for (LLVMValueRef element : deleted){
 		LLVMInstructionEraseFromParent(element);
 	}
 
 	return deleted.size() > 0;
 }
 
-void walkBasicblocks(LLVMValueRef function){
 
-	for (LLVMBasicBlockRef basicBlock = LLVMGetFirstBasicBlock(function); basicBlock; basicBlock = LLVMGetNextBasicBlock(basicBlock)) {
-		printf("\nIn basic block\n");
-		
-		int change = 1;
-		
-		while (change >= 1){
-			change = 0;
+void walkBasicblocks(LLVMValueRef function){
+	int change = 1;
+	while (change >= 1){
+		change = 0;
+
+		for (LLVMBasicBlockRef basicBlock = LLVMGetFirstBasicBlock(function); basicBlock; basicBlock = LLVMGetNextBasicBlock(basicBlock)) {
 
 			if (walkBBInstructions_subexp_elimi(basicBlock)) change++;
-			
+		
 			if (walkBBInstructions_constant_folding(basicBlock)) change++;
 			if (walkBBInstructions_deadcode_elimiation(basicBlock)) change++;
-
-			if (ConstantPropagation(function)) change++;
-			
 		}
-	}	
-	
 
+		if (ConstantPropagation(function)) change++;
+	}	
 }
 
 void walkFunctions(LLVMModuleRef module){
@@ -423,11 +392,11 @@ void walkFunctions(LLVMModuleRef module){
 
 		const char* funcName = LLVMGetValueName(function);	
 
-		walkBasicblocks(function);
+		printf("Function Name: %s\n", funcName);
 
+		walkBasicblocks(function);
  	}
 }
-
 
 int main(int argc, char** argv)
 {
