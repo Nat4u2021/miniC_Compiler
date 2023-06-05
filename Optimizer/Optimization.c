@@ -245,7 +245,6 @@ bool areConstantStoresWithSameValue(vector<LLVMValueRef> storeInstructions) {
 void print(unordered_set<LLVMValueRef> stores){
 	for (LLVMValueRef s: stores){
 		LLVMDumpValue(s);
-		printf("   |   ");
 	}	
 }
 
@@ -321,6 +320,8 @@ bool ConstantPropagation(LLVMValueRef function) {
 
 	unordered_set<LLVMValueRef> R;
 	vector<LLVMValueRef> deleted;
+	string bbName;
+	unsigned int count = 0;
 	for (LLVMBasicBlockRef basicBlock = LLVMGetFirstBasicBlock(function); basicBlock; basicBlock = LLVMGetNextBasicBlock(basicBlock)) {
 		R  = in.at(basicBlock);
 
@@ -385,38 +386,14 @@ void walkBasicblocks(LLVMValueRef function){
 	}	
 }
 
-void walkFunctions(LLVMModuleRef module){
+void OptimizeLLVM(LLVMModuleRef module){
 	for (LLVMValueRef function =  LLVMGetFirstFunction(module); 
 			function; 
 			function = LLVMGetNextFunction(function)) {
 
 		const char* funcName = LLVMGetValueName(function);	
 
-		printf("Function Name: %s\n", funcName);
-
 		walkBasicblocks(function);
  	}
 }
 
-int main(int argc, char** argv)
-{
-	LLVMModuleRef m;
-
-	if (argc == 2){
-		m = createLLVMModel(argv[1]);
-	}
-	else{
-		m = NULL;
-		return 1;
-	}
-
-	if (m != NULL){
-		walkFunctions(m);
-		LLVMDumpModule(m);
-	}
-	else {
-	    printf("m is NULL\n");
-	}
-	
-	return 0;
-}

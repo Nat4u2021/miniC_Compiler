@@ -1,6 +1,19 @@
 {
     "files.associations": {
         "*.tcc": "c",
-        "unordered_map": "c"
+        "unordered_map": "c",
+        "unordered_set": "c",
+        "vector": "c",
+        "optional": "c",
+        "ratio": "c",
+        "system_error": "c",
+        "array": "c",
+        "functional": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c",
+        "istream": "c",
+        "ostream": "c",
+        "chrono": "c"
     }
 }
